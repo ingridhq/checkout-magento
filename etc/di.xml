@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="carriers/ingrid/prod_api_key" xsi:type="string">1</item>
+                <item name="carriers/ingrid/stage_api_key" xsi:type="string">1</item>
+            </argument>
+            <argument name="environment" xsi:type="array">
+                <item name="carriers/ingrid/api_url" xsi:type="string">1</item>
+                <item name="carriers/ingrid/test_mode" xsi:type="boolean">1</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="logger"  type="Ingrid\Checkout\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">ingrid</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\Debug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="apiLogger" type="Ingrid\Checkout\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">ingrid_api</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\Debug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="apiMockLogger" type="Ingrid\Checkout\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">ingrid_mock_api</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\Debug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Ingrid\Checkout\Service\IngridSessionService">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Ingrid\Checkout\Block\Shipping\IngridCheckout">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Ingrid\Checkout\Observer\SessionComplete">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Ingrid\Checkout\Model\Carrier">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+    <type name="Ingrid\Checkout\Model\ConfigProvider">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+    <type name="Ingrid\Checkout\Helper\Config">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+    <type name="Ingrid\Checkout\Controller\Api\Callback">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+    <type name="Ingrid\Checkout\Controller\Api\Checkout">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+    <type name="Ingrid\Checkout\Model\Plugin\Order\Repository">
+        <arguments>
+            <argument name="logger" xsi:type="object">logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Ingrid\Checkout\Api\SiwClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">apiLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="Ingrid\Checkout\Api\SiwDownClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">apiMockLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="joinIngridDataToOrderRepositoryList" type="Ingrid\Checkout\Model\Plugin\Order\Repository"/>
+    </type>
+
+    <preference for="Ingrid\Checkout\Api\SiwClientInterface" type="Ingrid\Checkout\Api\SiwClient" />
+
+    <type name="Klarna\Kco\Model\Checkout\Validation">
+        <plugin name="nwt_ingrid_klarna_kco_model_checkout_validation" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\Checkout\Validation"/>
+    </type>
+</config>

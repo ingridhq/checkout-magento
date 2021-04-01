@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="ingrid_session" resource="default" engine="innodb" comment="Ingrid Session">
+        <column name="id" xsi:type="int" padding="10" unsigned="true" nullable="false" identity="true" comment="Entity Id"/>
+        <column name="order_id" xsi:type="int" nullable="false" comment="Magento Internal Order Id"/>
+        <column name="order_increment_id" xsi:type="varchar" length="255" nullable="false" comment="Magento Public Order Id"/>
+        <column name="tos_id" xsi:type="varchar" length="255" nullable="false" comment="Ingrid TOS Id"/>
+        <column name="session_id" xsi:type="varchar" length="255" nullable="false" comment="Ingrid Session Id"/>
+
+        <column name="external_method_id" xsi:type="varchar" length="255" nullable="true" comment="COS External Method ID"/>
+        <column name="shipping_method" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Method"/>
+        <column name="location_id" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Location ID"/>
+        <column name="location_name" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Location Name"/>
+        <column name="category_name" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Category Name"/>
+        <column name="time_slot_id" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Time Slot ID"/>
+        <column name="time_slot_start" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Time Slot Start"/>
+        <column name="time_slot_end" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Time Slot End"/>
+        <column name="carrier" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Carrier"/>
+        <column name="product" xsi:type="varchar" length="255" nullable="true" comment="COS Shipping Carrier Product"/>
+
+        <column name="is_completed" xsi:type="boolean" nullable="false" default="0" comment="Is Completed"/>
+        <column name="is_test" xsi:type="boolean" nullable="false" default="0" comment="Is Test"/>
+
+        <constraint referenceId="PRIMARY" xsi:type="primary">
+            <column name="id"/>
+        </constraint>
+        <constraint referenceId="INGRID_SESSION_ORDER_ID" xsi:type="unique">
+            <column name="order_id"/>
+        </constraint>
+        <constraint referenceId="INGRID_SESSION_ORDER_INCREMENT_ID" xsi:type="unique">
+            <column name="order_increment_id"/>
+        </constraint>
+        <constraint referenceId="INGRID_SESSION_SESSION_ID" xsi:type="unique">
+            <column name="session_id"/>
+        </constraint>
+        <constraint referenceId="INGRID_SESSION_TOS_ID" xsi:type="unique">
+            <column name="tos_id"/>
+        </constraint>
+        <index referenceId="INGRID_SESSION_COMPLETED_IDX" indexType="btree">
+            <column name="is_completed"/>
+        </index>
+<!--        <index referenceId="INGRID_SESSION_TOS_ID_IDX" indexType="btree">-->
+<!--            <column name="tos_id"/>-->
+<!--        </index>-->
+<!--        <index referenceId="INGRID_SESSION_SESSION_ID_IDX" indexType="btree">-->
+<!--            <column name="session_id"/>-->
+<!--        </index>-->
+    </table>
+</schema>

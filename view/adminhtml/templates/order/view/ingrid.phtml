@@ -1,0 +1,46 @@
+<?php /** @var \Ingrid\Checkout\Block\Adminhtml\Order\View\Ingrid $block */ ?>
+<?php if ($block->sessionExists()) { ?>
+    <?php if ($block->isFallback()) { ?>
+        <div class="admin__page-section-item" style="margin-bottom: 5rem;">
+            <div class="admin__page-section-item-title">
+                <span class="title">Ingrid</span>
+            </div>
+
+            <div class="admin__page-section-item-content">
+                Order completed using fallback, shipping info not available
+            </div>
+        </div>
+
+    <?php } else { ?>
+
+    <div class="admin__page-section-item" style="margin-bottom: 5rem;">
+        <div class="admin__page-section-item-title">
+            <span class="title">Ingrid</span>
+        </div>
+
+        <div class="admin__page-section-item-content">
+            Session ID: <?= $block->getInfo()->getSessionId() ?><br>
+            Order ID: <?= $block->getInfo()->getTosId() ?><br>
+            Category: <?= $block->getInfo()->getCategoryName() ?><br>
+
+            <?php if ($block->isProductDisplay()) { ?>
+            Product: <?= $block->getProductDisplay() ?><br>
+            <?php } else { ?>
+            Shipping Method: <?= $block->getMethodDisplay() ?><br>
+            <?php } ?>
+
+            <?php if ($block->getInfo()->isTest()) { ?>
+                Test mode: Yes<br>
+            <?php } ?>
+
+            <?php if ($block->getInfo()->getLocationName()) { ?>
+                Location: <?= $block->getInfo()->getLocationName() ?> (<?= $block->getInfo()->getLocationId() ?>)<br>
+            <?php } ?>
+
+            <?php if ($block->getInfo()->getTimeSlotId()) { ?>
+                Time slot: <?= $block->getTimeSlot() ?>
+            <?php } ?>
+        </div>
+    </div>
+    <?php } ?>
+<?php } ?>
