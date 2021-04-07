@@ -5,7 +5,7 @@
 ### Super Fast Install
 
 ```
-composer config repositories.ingrid-checkout-m2 vcs git@bitbucket.org:nordicwebteam/ingrid-checkout-m2.git
+composer config repositories.ingrid-checkout-magento vcs git@github.org:ingridhq/checkout-magento.git
 composer require ingrid/checkout-magento
 ``` 
 
