@@ -25,7 +25,6 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "guzzlehttp/guzzle": "^6.2",
-        "roave/security-advisories": "dev-master",
         "monolog/monolog": "^1.17",
         "magento/magento-composer-installer": "*",
         "magento/framework": "102.0.*|103.0.*",
@@ -40,6 +39,7 @@
         "cocur/slugify": "^4.0"
     },
     "suggest": {
-        "ext-curl": "For using cURL transport"
+        "ext-curl": "For using cURL transport",
+        "roave/security-advisories": "For preventing installation of components with known security vulnerabilities"
     }
 }
