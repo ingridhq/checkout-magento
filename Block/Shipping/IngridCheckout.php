@@ -9,8 +9,14 @@ use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Psr\Log\LoggerInterface;
+use Ingrid\Checkout\Helper\Config;
 
 class IngridCheckout extends Template {
+
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
 
     /**
      * @var string
@@ -21,14 +27,21 @@ class IngridCheckout extends Template {
      * @var HttpContext
      */
     protected $httpContext;
+
     /**
      * @var LoggerInterface
      */
     private $logger;
+
     /**
      * @var IngridSessionService
      */
     private $sessionService;
+
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * Ingrid Checkout block
@@ -43,6 +56,7 @@ class IngridCheckout extends Template {
         HttpContext $httpContext,
         LoggerInterface $logger,
         IngridSessionService $sessionService,
+        Config $config,
         array $data = []
     ) {
         $this->httpContext = $httpContext;
@@ -52,10 +66,19 @@ class IngridCheckout extends Template {
 
         $logger->debug('checkout block init');
         $this->sessionService = $sessionService;
+        $this->config = $config;
     }
 
     public function getCheckoutHtml() {
         $this->logger->debug('block::getCheckoutHtml');
         return $this->sessionService->sessionHtmlForCheckout();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->config->getConfig('active');
     }
 }
