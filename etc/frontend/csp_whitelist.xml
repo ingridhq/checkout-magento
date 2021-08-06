@@ -33,5 +33,20 @@
                 <value id="klarnaevt" type="host">*.klarnaevt.com</value>
             </values>
         </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="dibs" type="host">*.dibspayment.eu</value>
+            </values>
+        </policy>
+        <policy id="style-src-elem">
+            <values>
+                <value id="dibs" type="host">*.dibspayment.eu</value>
+            </values>
+        </policy>
+        <policy id="frame-src">
+            <values>
+                <value id="dibs" type="host">*.dibspayment.eu</value>
+            </values>
+        </policy>
     </policies>
 </csp_whitelist>
