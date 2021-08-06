@@ -1,5 +1,8 @@
 
 define([
+    'jquery',
+    'uiRegistry',
+    'mage/url',
     'mage/storage',
     'underscore',
     'Magento_Checkout/js/action/select-payment-method',
@@ -11,6 +14,9 @@ define([
     'Magento_Checkout/js/action/get-totals',
     'Magento_Checkout/js/action/recollect-shipping-rates',
 ], function (
+    $,
+    uiRegistry,
+    mageurl,
     storage,
     _,
     selectPaymentMethodAction,
@@ -127,6 +133,37 @@ define([
                 });
             });
         },
-
+        attachDibsEvents: function () {
+            var self = this;
+            window._sw(function(api) {
+                api.on('shipping_option_changed', function(option) {
+                    // console.log('option changed: ', option);
+                    getTotals([]);
+                    $.ajax({
+                        type: "POST",
+                        context: this,
+                        url: mageurl.build("easycheckout/order/cart/"),
+                        success: function (response) {
+                            window._dibsCheckout.freezeCheckout();
+                            window._dibsCheckout.thawCheckout();
+                            var dibsCheckout = uiRegistry.get('nwtdibsCheckout');
+                            if (jQuery.parseJSON(response).updates) {
+                                var blocks = jQuery.parseJSON(response).updates;
+                                var div = null;
+                                for (var block in blocks) {
+                                    if (blocks.hasOwnProperty(block)) {
+                                        div = jQuery('#dibs-easy-checkout_' + block);
+                                        if (div.size() > 0) {
+                                            div.replaceWith(blocks[block]);
+                                            dibsCheckout._bindEvents(block);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        },
     }
 });

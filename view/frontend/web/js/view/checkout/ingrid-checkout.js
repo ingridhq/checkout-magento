@@ -51,7 +51,11 @@ define([
                 var checkExist = window.setInterval(function () {
                     if (window._sw) {
                         // console.log('_sw found');
-                        checkout.attachEvents();
+                        if (window.checkoutConfig.saveShippingMethodUrl === undefined) {
+                            checkout.attachEvents();
+                        } else {
+                            checkout.attachDibsEvents();
+                        }
                         window.clearInterval(checkExist);
                     } else {
                         // console.log('no _sw yet');
