@@ -1,0 +1,43 @@
+<?php /** @var \Ingrid\Checkout\Block\Shipping\IngridCheckout $block */ ?>
+<div class="ingrid-checkout-block">
+    <?= $block->getCheckoutHtml() ?>
+</div>
+<?php if ($block->isActive()) : ?>
+    <style>
+        .loading-mask {
+            display: none !important;
+        }
+        @media (min-width: 768px), print {
+            .opc-wrapper {
+                float: right !important;
+            }
+            .opc-sidebar {
+                margin: 0 0 20px !important;
+            }
+        }
+    </style>
+<?php endif; ?>
+<script>
+    if (typeof window.checkoutConfig === "undefined") {
+        window.checkoutConfig = <?= $block->getWidgetConfigJson() ?>
+    }
+</script>
+<script>
+    require([
+            'jquery',
+            'domReady'
+        ], function($, domReady) {
+            domReady(function () {
+                var self = this;
+            window._sw(function(api) {
+                api.on('shipping_option_changed', function(option) {
+                    // console.log('option changed: ', option);
+                setTimeout(function(){
+                    $.mage.nwtsveaCheckout.prototype._ajaxSubmit('/sveacheckout/order/cart','GET','');
+                },2000);
+                });
+            });
+            });
+        }
+    );
+</script>

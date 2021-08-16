@@ -10,6 +10,7 @@ use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Psr\Log\LoggerInterface;
 use Ingrid\Checkout\Helper\Config;
+use Ingrid\Checkout\Model\ConfigProvider;
 
 class IngridCheckout extends Template {
 
@@ -44,6 +45,11 @@ class IngridCheckout extends Template {
     private $config;
 
     /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
+
+    /**
      * Ingrid Checkout block
      * @param TemplateContext $context
      * @param HttpContext $httpContext
@@ -57,6 +63,7 @@ class IngridCheckout extends Template {
         LoggerInterface $logger,
         IngridSessionService $sessionService,
         Config $config,
+        ConfigProvider $configProvider,
         array $data = []
     ) {
         $this->httpContext = $httpContext;
@@ -67,6 +74,7 @@ class IngridCheckout extends Template {
         $logger->debug('checkout block init');
         $this->sessionService = $sessionService;
         $this->config = $config;
+        $this->configProvider = $configProvider;
     }
 
     public function getCheckoutHtml() {
@@ -80,5 +88,17 @@ class IngridCheckout extends Template {
     public function isActive()
     {
         return $this->config->getConfig('active');
+    }
+
+    /**
+     * Get widget config to be included in custom checkout
+     *
+     * @return false|string
+     */
+    public function getWidgetConfigJson()
+    {
+        $checkoutConfig = $this->configProvider->getConfig();
+
+        return \json_encode($checkoutConfig) ?: '{}';
     }
 }
