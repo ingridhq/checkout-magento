@@ -10,7 +10,6 @@ define([
     'Ingrid_Checkout/js/model/config',
     'Ingrid_Checkout/js/model/checkout',
     'uiRegistry',
-    'Klarna_Kco/js/action/select-shipping-method',
     'Magento_Checkout/js/action/set-shipping-information'
 
 ], function (
@@ -25,7 +24,6 @@ define([
     config,
     checkout,
     uiRegistry,
-    kcoShippingMethod,
     setShippingInformationAction
 ) {
     'use strict';
@@ -80,13 +78,6 @@ define([
                 email: email,
                 address: quote.shippingAddress(),
             });
-            if (window.checkoutConfig.klarna.klarnaUpdateNeeded) {
-                var method = quote.shippingMethod();
-                if (method !== null) {
-                    kcoShippingMethod(method);
-                    setShippingInformationAction();
-                }
-            }
         },
 
         billingAddressObserver: function (addr) {

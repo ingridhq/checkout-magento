@@ -109,8 +109,4 @@
     </type>
 
     <preference for="Ingrid\Checkout\Api\SiwClientInterface" type="Ingrid\Checkout\Api\SiwClient" />
-
-    <type name="Klarna\Kco\Model\Checkout\Validation">
-        <plugin name="nwt_ingrid_klarna_kco_model_checkout_validation" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\Checkout\Validation"/>
-    </type>
 </config>
