@@ -1,3 +1,11 @@
 .loading-mask {
     display: none !important;
 }
+@media (min-width: 768px), print {
+    .opc-wrapper {
+        float: right !important;
+    }
+    .opc-sidebar {
+        margin: 0 0 20px !important;
+    }
+}
