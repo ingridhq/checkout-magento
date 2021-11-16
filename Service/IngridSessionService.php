@@ -201,6 +201,7 @@ class IngridSessionService {
         $isKlarnaEnabled = $this->kcoConfig->klarnaEnabled();
         if ($isKlarnaEnabled) {
             $ingridSessionId = $this->kcoSession->getCheckout()->getData(self::SESSION_ID_KEY);
+            $quote = $this->kcoSession->getCheckout()->getQuote();
         } else {
         $ingridSessionId = $this->checkoutSession->getData(self::SESSION_ID_KEY);
         $quote = $this->checkoutSession->getQuote();
