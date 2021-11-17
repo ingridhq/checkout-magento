@@ -12,7 +12,7 @@ define([
     'Magento_Checkout/js/model/quote',
     'Ingrid_Checkout/js/model/config',
     'Magento_Checkout/js/action/get-totals',
-    'Magento_Checkout/js/action/recollect-shipping-rates',
+    'Magento_Checkout/js/action/set-shipping-information'
 ], function (
     $,
     uiRegistry,
@@ -26,7 +26,7 @@ define([
     quote,
     config,
     getTotals,
-    recollectShippingRates,
+    setShippingInformationAction,
 ) {
     'use strict';
     var refreshInProcess = false;
@@ -129,7 +129,7 @@ define([
                 api.on('shipping_option_changed', function(option) {
                     // console.log('option changed: ', option);
                     getTotals([]);
-                    recollectShippingRates();
+                    setShippingInformationAction();
                 });
             });
         },
