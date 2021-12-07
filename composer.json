@@ -41,7 +41,6 @@
 	"klarna/module-backend":"*"
     },
     "suggest": {
-        "ext-curl": "For using cURL transport",
-        "roave/security-advisories": "For preventing installation of components with known security vulnerabilities"
+        "ext-curl": "For using cURL transport"
     }
 }
