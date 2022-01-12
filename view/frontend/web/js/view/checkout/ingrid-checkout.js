@@ -76,15 +76,17 @@ define([
             if (!email && checkoutConfig.customerData) {
                 email = checkoutConfig.customerData.email;
             }
-            checkout.updateData({
-                email: email,
-                address: quote.shippingAddress(),
-            });
-            if (window.checkoutConfig.klarna.klarnaUpdateNeeded) {
-                var method = quote.shippingMethod();
-                if (method !== null) {
-                    kcoShippingMethod(method);
-                    setShippingInformationAction();
+            if (addr.postcode) {
+                checkout.updateData({
+                    email: email,
+                    address: quote.shippingAddress(),
+                });
+                if (window.checkoutConfig.klarna.klarnaUpdateNeeded) {
+                    var method = quote.shippingMethod();
+                    if (method !== null) {
+                        kcoShippingMethod(method);
+                        setShippingInformationAction();
+                    }
                 }
             }
         },
