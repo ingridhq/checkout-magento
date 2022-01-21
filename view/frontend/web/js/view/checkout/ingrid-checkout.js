@@ -51,7 +51,11 @@ define([
                 var checkExist = window.setInterval(function () {
                     if (window._sw) {
                         // console.log('_sw found');
-                        checkout.attachEvents();
+                        if (window.checkoutConfig.saveShippingMethodUrl === undefined) {
+                            checkout.attachEvents();
+                        } else {
+                            checkout.attachDibsEvents();
+                        }
                         window.clearInterval(checkExist);
                     } else {
                         // console.log('no _sw yet');
@@ -72,15 +76,17 @@ define([
             if (!email && checkoutConfig.customerData) {
                 email = checkoutConfig.customerData.email;
             }
-            checkout.updateData({
-                email: email,
-                address: quote.shippingAddress(),
-            });
-            if (window.checkoutConfig.klarna.klarnaUpdateNeeded) {
-                var method = quote.shippingMethod();
-                if (method !== null) {
-                    kcoShippingMethod(method);
-                    setShippingInformationAction();
+            if (addr.postcode) {
+                checkout.updateData({
+                    email: email,
+                    address: quote.shippingAddress(),
+                });
+                if (window.checkoutConfig.klarna.klarnaUpdateNeeded) {
+                    var method = quote.shippingMethod();
+                    if (method !== null) {
+                        kcoShippingMethod(method);
+                        setShippingInformationAction();
+                    }
                 }
             }
         },

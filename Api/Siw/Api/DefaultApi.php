@@ -1218,6 +1218,9 @@ class DefaultApi {
                         ];
                     }
                 }
+                $body->getPurchaseCountry() ? $arrayBody['purchase_country'] = $body->getPurchaseCountry():'';
+                $body->getPurchaseCurrency() ? $arrayBody["purchase_currency"] = $body->getPurchaseCurrency():'';
+                $body->getLocales() ? $arrayBody["locales"] = $body->getLocales():'';
                 if ($body->getCart()) {
                     $body->getCart()->getTotalValue() ? $arrayBody["cart"]["total_value"] = $body->getCart()->getTotalValue():'';
                     $body->getCart()->getTotalDiscount() ? $arrayBody["cart"]["total_discount"] = $body->getCart()->getTotalDiscount():'';

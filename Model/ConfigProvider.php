@@ -57,6 +57,7 @@ class ConfigProvider implements ConfigProviderInterface {
             'ingrid_checkout_html' => $checkoutHtml,
             'ingrid' => [
                 'checkoutUrl' => $this->getUrl('ingrid/api/checkout'),
+                'isActive' => $this->isActive(),
             ],
         ];
     }
@@ -70,5 +71,13 @@ class ConfigProvider implements ConfigProviderInterface {
      */
     private function getUrl($route = '', array $params = []) {
         return $this->urlBuilder->getUrl($route, $params);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->config->getConfig('active');
     }
 }

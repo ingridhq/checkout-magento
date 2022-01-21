@@ -1,5 +1,8 @@
 
 define([
+    'jquery',
+    'uiRegistry',
+    'mage/url',
     'mage/storage',
     'underscore',
     'Magento_Checkout/js/action/select-payment-method',
@@ -9,8 +12,11 @@ define([
     'Magento_Checkout/js/model/quote',
     'Ingrid_Checkout/js/model/config',
     'Magento_Checkout/js/action/get-totals',
-    'Magento_Checkout/js/action/recollect-shipping-rates',
+    'Magento_Checkout/js/action/set-shipping-information'
 ], function (
+    $,
+    uiRegistry,
+    mageurl,
     storage,
     _,
     selectPaymentMethodAction,
@@ -20,7 +26,7 @@ define([
     quote,
     config,
     getTotals,
-    recollectShippingRates,
+    setShippingInformationAction,
 ) {
     'use strict';
     var refreshInProcess = false;
@@ -83,7 +89,7 @@ define([
                 .done(function (response) {
                     // console.log('post response ok');
                     getTotals([]);
-                    recollectShippingRates();
+                    //setShippingInformationAction();
                 })
                 .fail(function (response) {
                     // console.log('post response fail', response);
@@ -123,10 +129,44 @@ define([
                 api.on('shipping_option_changed', function(option) {
                     // console.log('option changed: ', option);
                     getTotals([]);
-                    recollectShippingRates();
+                    var method = quote.shippingMethod();
+                    if (method !== null) {
+                    setShippingInformationAction();
+                    }
                 });
             });
         },
-
+        attachDibsEvents: function () {
+            var self = this;
+            window._sw(function(api) {
+                api.on('shipping_option_changed', function(option) {
+                    // console.log('option changed: ', option);
+                    getTotals([]);
+                    $.ajax({
+                        type: "POST",
+                        context: this,
+                        url: mageurl.build("easycheckout/order/cart/"),
+                        success: function (response) {
+                            window._dibsCheckout.freezeCheckout();
+                            window._dibsCheckout.thawCheckout();
+                            var dibsCheckout = uiRegistry.get('nwtdibsCheckout');
+                            if (jQuery.parseJSON(response).updates) {
+                                var blocks = jQuery.parseJSON(response).updates;
+                                var div = null;
+                                for (var block in blocks) {
+                                    if (blocks.hasOwnProperty(block)) {
+                                        div = jQuery('#dibs-easy-checkout_' + block);
+                                        if (div.size() > 0) {
+                                            div.replaceWith(blocks[block]);
+                                            dibsCheckout._bindEvents(block);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        },
     }
 });

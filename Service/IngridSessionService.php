@@ -201,6 +201,7 @@ class IngridSessionService {
         $isKlarnaEnabled = $this->kcoConfig->klarnaEnabled();
         if ($isKlarnaEnabled) {
             $ingridSessionId = $this->kcoSession->getCheckout()->getData(self::SESSION_ID_KEY);
+            $quote = $this->kcoSession->getCheckout()->getQuote();
         } else {
         $ingridSessionId = $this->checkoutSession->getData(self::SESSION_ID_KEY);
         $quote = $this->checkoutSession->getQuote();
@@ -226,13 +227,27 @@ class IngridSessionService {
             }
         }
         $this->log->info('updating current Ingrid session on checkout session');
-
-        $updateReq = new UpdateSessionRequest();
-        $updateReq->setId($ingridSessionId);
-        $updateReq->setCart($this->makeCart($quote));
-        $this->siwClient->updateSession($updateReq);
-
         $resp = $this->siwClient->getSession($ingridSessionId);
+        $ingridCartItems = $resp->getSession()->getCart()->getItems();
+        $ingridcart = [];
+        foreach ($ingridCartItems as $ingridItem) {
+            $ingridcart[] = $ingridItem->getSku();
+            $ingridcart[] = $ingridItem->getQuantity();
+        }
+        $mcart = [];
+        foreach ($quote->getItems() as $item) {
+            $mcart[] = $item->getSku();
+            $mcart[] = $item->getQty();
+        }
+        $diff = (bool)count(array_diff($mcart, $ingridcart));
+        $diff2 = (bool)count(array_diff($ingridcart, $mcart));
+        if ($diff || $diff2) {
+            $updateReq = new UpdateSessionRequest();
+            $updateReq->setId($ingridSessionId);
+            $updateReq->setCart($this->makeCart($quote));
+            $this->siwClient->updateSession($updateReq);
+            $resp = $this->siwClient->getSession($ingridSessionId);
+        }
         return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
     }
 
@@ -756,6 +771,9 @@ class IngridSessionService {
         $cust = new CustomerInfo();
         $cust->setEmail($req->email);
         $cust->setPhone($req->address->telephone);
+        if ($addr->getCountry() != '') {
+            $cust->setAddress($addr);
+        }
         $updateReq->setCustomer($cust);
 
         $this->siwClient->updateSession($updateReq);

@@ -12,6 +12,10 @@
             <module name="Magento_Bundle"/>
             <module name="Magento_Directory"/>
             <module name="Magento_Shipping"/>
+            <module name="NWT_Unifaun"/>
+            <module name="NWT_UnifaunDeliveryCheckout"/>
+            <module name="Svea_Checkout"/>
+            <module name="Dibs_EasyCheckout"/>
         </sequence>
     </module>
 </config>
