@@ -46,7 +46,7 @@ class IngridCheckout extends Template {
 
     /**
      * @var ConfigProvider
-     */
+    */
     private $configProvider;
 
     /**
@@ -98,7 +98,6 @@ class IngridCheckout extends Template {
     public function getWidgetConfigJson()
     {
         $checkoutConfig = $this->configProvider->getConfig();
-
         return \json_encode($checkoutConfig) ?: '{}';
     }
 }

@@ -89,7 +89,7 @@ define([
                 .done(function (response) {
                     // console.log('post response ok');
                     getTotals([]);
-                    recollectShippingRates();
+                    //setShippingInformationAction();
                 })
                 .fail(function (response) {
                     // console.log('post response fail', response);
@@ -129,7 +129,10 @@ define([
                 api.on('shipping_option_changed', function(option) {
                     // console.log('option changed: ', option);
                     getTotals([]);
+                    var method = quote.shippingMethod();
+                    if (method !== null) {
                     setShippingInformationAction();
+                    }
                 });
             });
         },
