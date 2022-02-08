@@ -94,9 +94,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
      * @return Result|bool
      */
     public function collectRates(RateRequest $request) {
-        if ($request->getDestPostcode() === null) {
-            return false;
-        }
+
         if (!$this->getConfigFlag('active')) {
             $this->_logger->warning('carrier not active');
             return false;
