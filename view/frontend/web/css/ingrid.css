@@ -14,6 +14,14 @@
     order: 2;
 }
 
+@media (min-width: 768px), print {
+    .opc-wrapper {
+        float: right !important;
+    }
+    .opc-sidebar {
+        margin: 0 0 20px !important;
+    }
+}
 
 @media (max-width: 767px), print {
     .checkout-klarna-index .ingrid-checkout-ko {
