@@ -1,6 +1,6 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <!-- <css src="Ingrid_Checkout::css/ingrid.css"/> -->
+        <css src="Ingrid_Checkout::css/ingrid.css"/>
     </head>
     <body>
         <referenceBlock name="checkout.root">
@@ -8,6 +8,9 @@
                 <argument name="jsLayout" xsi:type="array">
                     <item name="components" xsi:type="array">
                         <item name="checkout" xsi:type="array">
+                            <item name="config" xsi:type="array">
+                                <item name="template" xsi:type="string">Ingrid_Checkout/onepage</item>
+                            </item>
                             <item name="children" xsi:type="array">
                                 <item name="steps" xsi:type="array">
                                     <item name="children" xsi:type="array">

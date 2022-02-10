@@ -1,11 +1,23 @@
 .loading-mask {
     display: none !important;
 }
-@media (min-width: 768px), print {
-    .opc-wrapper {
-        float: right !important;
-    }
-    .opc-sidebar {
-        margin: 0 0 20px !important;
+
+.checkout-index-index .opc-wrapper {
+    float: left !important;
+}
+
+/* Klarna styles */
+
+.checkout-klarna-index .ingrid-checkout-ko {
+    width: 33.33333333%;
+    float: left;
+    order: 2;
+}
+
+
+@media (max-width: 767px), print {
+    .checkout-klarna-index .ingrid-checkout-ko {
+        width: 100%;
+        float: none;
     }
 }
