@@ -19,14 +19,14 @@
                   <item name="components" xsi:type="array">
                       <item name="checkout" xsi:type="array">
                           <item name="children" xsi:type="array">
+                                <item name="ingrid_checkout" xsi:type="array">
+                                    <item name="displayArea" xsi:type="string">ingrid_checkout</item>
+                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                    <item name="sortOrder" xsi:type="string">1</item>
+                                    <item name="component" xsi:type="string">Ingrid_Checkout/js/view/checkout/ingrid-checkout</item>
+                                </item>
                                 <item name="sidebar" xsi:type="array">
                                     <item name="children" xsi:type="array">
-                                        <item name="ingrid_checkout" xsi:type="array">
-                                            <item name="provider" xsi:type="string">checkoutProvider</item>
-                                            <item name="displayArea" xsi:type="string">summary</item>
-                                            <item name="sortOrder" xsi:type="string">1</item>
-                                            <item name="component" xsi:type="string">Ingrid_Checkout/js/view/checkout/ingrid-checkout</item>
-                                        </item>
                                         <item name="klarna_shipping" xsi:type="array">
                                             <item name="config" xsi:type="array">
                                                 <item name="componentDisabled" xsi:type="boolean">false</item>
