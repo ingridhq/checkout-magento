@@ -37,8 +37,6 @@ use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
 use Psr\Log\LoggerInterface;
-use Klarna\Kco\Model\Checkout\Kco\Session as KcoSession;
-use Klarna\Base\Model\Config as KcoConfig;
 
 class IngridSessionService {
     const SESSION_ID_KEY = 'ingrid_session_id';
@@ -72,16 +70,6 @@ class IngridSessionService {
      * @var IngridSessionRepository
      */
     private $ingridSessionRepository;
-    
-    /**
-     * @var KcoSession
-     */
-    private $kcoSession;
-
-    /**
-     * @var KcoConfig
-     */
-    private $kcoConfig;
 
     /**
      * IngridSessionProvider constructor.
@@ -93,9 +81,7 @@ class IngridSessionService {
         IngridSessionRepository $ingridSessionRepository,
         LoggerInterface $logger,
         SiwClientInterface $siwClient,
-        Config $config,
-        KcoSession $kcoSession,
-        KcoConfig $kcoConfig
+        Config $config
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->log = $logger;
@@ -106,8 +92,6 @@ class IngridSessionService {
         $this->attributeSetRepository = $attributeSetRepository;
         $this->slugify = new Slugify(['separator' => '_']);
         $this->ingridSessionRepository = $ingridSessionRepository;
-        $this->kcoSession       = $kcoSession;
-        $this->kcoConfig       = $kcoConfig;
     }
 
     /**
@@ -198,31 +182,17 @@ class IngridSessionService {
      * @throws ApiException
      */
     private function mageCheckoutSession(): SessionHolder {
-        $isKlarnaEnabled = $this->kcoConfig->klarnaEnabled();
-        if ($isKlarnaEnabled) {
-            $ingridSessionId = $this->kcoSession->getCheckout()->getData(self::SESSION_ID_KEY);
-            $quote = $this->kcoSession->getCheckout()->getQuote();
-        } else {
         $ingridSessionId = $this->checkoutSession->getData(self::SESSION_ID_KEY);
         $quote = $this->checkoutSession->getQuote();
-        }
+        
         if ($ingridSessionId == null) {
             $this->log->info('no active Ingrid session on checkout session, creating');
             try {
-                if ($isKlarnaEnabled) {
-                    $resp = $this->createSession($this->kcoSession->getCheckout());
-                    $this->kcoSession->getCheckout()->setData(self::SESSION_ID_KEY, $resp->getSession()->getId());
-                } else {
                 $resp = $this->createSession($this->checkoutSession);
                 $this->checkoutSession->setData(self::SESSION_ID_KEY, $resp->getSession()->getId());
-            }
                 return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
             } catch (\Exception $e) {
-                if ($isKlarnaEnabled) {
-                    $this->kcoSession->getCheckout()->setData(self::SESSION_FALLBACK_KEY, true);
-                } else {
                 $this->checkoutSession->setData(self::SESSION_FALLBACK_KEY, true);
-            }
                 throw $e;
             }
         }

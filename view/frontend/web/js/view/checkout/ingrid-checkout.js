@@ -10,8 +10,8 @@ define([
     'Ingrid_Checkout/js/model/config',
     'Ingrid_Checkout/js/model/checkout',
     'uiRegistry',
-    'Klarna_Kco/js/action/select-shipping-method',
-    'Magento_Checkout/js/action/set-shipping-information'
+    'Magento_Checkout/js/action/set-shipping-information',
+    'Magento_Checkout/js/action/get-totals'
 
 ], function (
     ko,
@@ -25,8 +25,8 @@ define([
     config,
     checkout,
     uiRegistry,
-    kcoShippingMethod,
-    setShippingInformationAction
+    setShippingInformationAction,
+    getTotals
 ) {
     'use strict';
     // window.ingridquote = quote;
@@ -54,7 +54,7 @@ define([
                         if (window.checkoutConfig.saveShippingMethodUrl === undefined) {
                             checkout.attachEvents();
                         } else {
-                            checkout.attachDibsEvents();
+                              checkout.attachDibsEvents();
                         }
                         window.clearInterval(checkExist);
                     } else {
@@ -70,24 +70,14 @@ define([
             checkoutDataResolver.resolveShippingAddress();
         },
 
-        shippingAddressObserver: function (addr) {
-            // console.log('shippingAddressObserver', quote.shippingAddress());
-            var email = quote.guestEmail;
-            if (!email && checkoutConfig.customerData) {
-                email = checkoutConfig.customerData.email;
-            }
-            if (addr.postcode) {
-                checkout.updateData({
-                    email: email,
+        shippingAddressObserver: function (address) {
+            //console.log('shippingAddressObserver', quote.shippingAddress());
+            var addr = quote.shippingAddress();
+            if (addr.postcode && addr.email) {
+            checkout.updateData({
+                    email: addr.email,
                     address: quote.shippingAddress(),
                 });
-                if (window.checkoutConfig.klarna.klarnaUpdateNeeded) {
-                    var method = quote.shippingMethod();
-                    if (method !== null) {
-                        kcoShippingMethod(method);
-                        setShippingInformationAction();
-                    }
-                }
             }
         },
 

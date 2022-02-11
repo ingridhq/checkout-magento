@@ -43,6 +43,11 @@
                 <value id="dibs" type="host">*.dibspayment.eu</value>
             </values>
         </policy>
+         <policy id="style-src">
+            <values>
+                <value id="dibs" type="host">*.dibspayment.eu</value>
+            </values>
+        </policy>
         <policy id="frame-src">
             <values>
                 <value id="dibs" type="host">*.dibspayment.eu</value>
