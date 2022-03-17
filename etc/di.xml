@@ -113,4 +113,11 @@
     <type name="Klarna\Kco\Model\Checkout\Validation">
         <plugin name="nwt_ingrid_klarna_kco_model_checkout_validation" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\Checkout\Validation"/>
     </type>
+    <type name="Ingrid\Checkout\Controller\Update\Briqpay">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="checkout" xsi:type="object">Briqpay\Checkout\Model\Checkout\BriqpayCheckout</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
