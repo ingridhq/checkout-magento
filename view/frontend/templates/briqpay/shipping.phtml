@@ -1,0 +1,51 @@
+<?php /** @var \Ingrid\Checkout\Block\Shipping\IngridCheckout $block */ ?>
+
+<div class="ingrid-checkout-block">
+    <?= $block->getCheckoutHtml() ?>
+</div>
+<script>
+    require([
+            'jquery',
+            'domReady',
+            'Briqpay_Checkout/js/checkout'
+        ], function($, domReady, briqpayCheckout) {
+            domReady(function () {
+                var self = this;
+                
+                window._sw(function(api) {
+                    api.on('shipping_option_changed', function(option) {
+                        //console.log(option);
+                        jQuery.ajax({
+                            url:  '/ingrid/update/briqpay/',
+                            type: 'GET',
+                            data: '',
+                            beforeSend: function () {
+                                window._briqpay.checkout.suspend();
+                            },
+                            complete: function () {
+                                window._briqpay.checkout.resume();
+                            },
+                            success: function (response) {
+                                var data = JSON.parse(response);
+                                if (data.updates) {
+                                    var blocks = data.updates;
+                                    var div = null;
+
+                                    for (var block in blocks) {
+                                        if (blocks.hasOwnProperty(block)) {
+                                            div = jQuery('#briqpay-checkout_' + block);
+                                            if (div.size() > 0) {
+                                                div.replaceWith(blocks[block]);
+                                                briqpayCheckout._proto._bindEvents(block);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                });
+            });
+        }
+    );
+</script>
