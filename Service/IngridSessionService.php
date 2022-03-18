@@ -182,14 +182,14 @@ class IngridSessionService {
      * @throws ApiException
      */
     private function mageCheckoutSession(): SessionHolder {
-        $ingridSessionId = $this->checkoutSession->getData(self::SESSION_ID_KEY);
+        $ingridSessionId = $this->checkoutSession->getQuote()->getIngridSessionId();
         $quote = $this->checkoutSession->getQuote();
         
         if ($ingridSessionId == null) {
             $this->log->info('no active Ingrid session on checkout session, creating');
             try {
                 $resp = $this->createSession($this->checkoutSession);
-                $this->checkoutSession->setData(self::SESSION_ID_KEY, $resp->getSession()->getId());
+                $this->checkoutSession->getQuote()->setIngridSessionId($resp->getSession()->getId());
                 return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
             } catch (\Exception $e) {
                 $this->checkoutSession->setData(self::SESSION_FALLBACK_KEY, true);

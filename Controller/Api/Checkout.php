@@ -88,7 +88,7 @@ class Checkout extends BaseAction {
             return $resultPage;
         }
 
-        $ingridSessionId = $this->checkoutSession->getData(IngridSessionService::SESSION_ID_KEY);
+        $ingridSessionId = $this->checkoutSession->getQuote()->getIngridSessionId();
         if ($ingridSessionId === null) {
             $msg = 'checkout session missing Ingrid ID, please reload the page';
             $this->log->warning($msg, $logCtx);
@@ -133,7 +133,7 @@ class Checkout extends BaseAction {
      */
     private function logCtx($context = []) : array {
         if (!isset($context['ingrid_session_id'])) {
-            $context['ingrid_session_id'] = $this->checkoutSession->getData(IngridSessionService::SESSION_ID_KEY);
+            $context['ingrid_session_id'] = $this->checkoutSession->getQuote()->getIngridSessionId();
         }
         return $context;
     }

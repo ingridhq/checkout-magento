@@ -45,7 +45,7 @@ class SessionComplete implements ObserverInterface {
         try {
             /** @var  \Magento\Sales\Model\Order $order */
             $order = $observer->getEvent()->getData('order');
-            $ingridSessionId = $this->checkoutSession->getData(IngridSessionService::SESSION_ID_KEY, true);
+            $ingridSessionId = $this->checkoutSession->getQuote()->getIngridSessionId();
             $orderCtx = ['order_id' => $order->getId(), 'quote_id' => $order->getQuoteId(), 'ingrid_session_id' => $ingridSessionId];
             if ($ingridSessionId === null) {
 
