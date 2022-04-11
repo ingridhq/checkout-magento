@@ -445,9 +445,9 @@ class IngridSessionService {
 
         $dimen = new Dimensions();
         // TODO not tested, fix when fix is available https://github.com/magento/magento2/issues/24948
-        $dimen->setLength($product->getTsDimensionsLength());
-        $dimen->setHeight($product->getTsDimensionsHeight());
-        $dimen->setWidth($product->getTsDimensionsWidth());
+        $dimen->setLength($product->getIngridDimensionsLength());
+        $dimen->setHeight($product->getIngridDimensionsHeight());
+        $dimen->setWidth($product->getIngridDimensionsWidth());
         if (!($dimen->getLength() == null || $dimen->getWidth() == null || $dimen->getHeight() == null)) {
             $itm->setDimensions($this->dimensionsMm($store, $dimen));
         }
