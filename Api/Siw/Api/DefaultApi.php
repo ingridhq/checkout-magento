@@ -1522,7 +1522,7 @@ class DefaultApi {
             $item->getName() ? $mapItems[$key]["name"] = $item->getName():'';
             $item->getAttributes() ? $mapItems[$key]["attributes"] = $item->getAttributes():'';
             $item->getOutOfStock() ? $mapItems[$key]["out_of_stock"] = $item->getOutOfStock():'';
-            $item->getDimensions() ? $mapItems[$key]["dimensions"] = $item->getDimensions():'';
+            $item->getDimensions() ? $mapItems[$key]["dimensions"] = $item->getDimensions()->getData():'';
             $item->getQuantity() ? $mapItems[$key]["quantity"] = $item->getQuantity():'';
             $item->getWeight() ? $mapItems[$key]["weight"] = $item->getWeight():'';
             $item->getDiscount() ? $mapItems[$key]["discount"] = $item->getDiscount():'';
