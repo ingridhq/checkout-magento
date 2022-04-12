@@ -325,4 +325,13 @@ class Dimensions implements ModelInterface, ArrayAccess {
 
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
+
+    /**
+     * get Data.
+     *
+     * @return array
+     */
+    public function getData() {
+        return $this->container;
+    }
 }
