@@ -11,10 +11,12 @@
         ], function($, domReady, briqpayCheckout) {
             domReady(function () {
                 var self = this;
-                $('#briqpay_checkoutWidget').css({"pointer-events": "none", "background": "#808080"});
+                $('#checkout-form').css("background", "#eeeeee");
+                $('#briqpay').css("visibility", "hidden");
                 window._sw(function(api) {
                     api.on('address_changed', function(option) {
-                        $('#briqpay_checkoutWidget').css({"pointer-events": "auto", "background": "#fff"});
+                        $('#checkout-form').css("background", "#fff");
+                        $('#briqpay').css("visibility", "visible");
                     }),
                     api.on('shipping_option_changed', function(option) {
                         //console.log(option);
