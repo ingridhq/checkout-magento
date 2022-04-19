@@ -11,8 +11,11 @@
         ], function($, domReady, briqpayCheckout) {
             domReady(function () {
                 var self = this;
-                
+                $('#briqpay_checkoutWidget').css({"pointer-events": "none", "background": "#808080"});
                 window._sw(function(api) {
+                    api.on('address_changed', function(option) {
+                        $('#briqpay_checkoutWidget').css({"pointer-events": "auto", "background": "#fff"});
+                    }),
                     api.on('shipping_option_changed', function(option) {
                         //console.log(option);
                         jQuery.ajax({
