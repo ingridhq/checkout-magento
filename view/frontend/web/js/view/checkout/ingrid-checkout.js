@@ -71,7 +71,7 @@ define([
                     } else {
                         // console.log('no _sw yet');
                     }
-                }, 1000);
+                }, 300);
             });
             return this;
         },
