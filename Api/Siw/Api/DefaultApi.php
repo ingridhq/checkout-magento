@@ -459,7 +459,7 @@ class DefaultApi {
 
             $statusCode = $response->getStatus();
 
-            if ($statusCode < 200 || $statusCode > 299) {
+            if ($statusCode < 100 || $statusCode > 299 ) {
                 throw new ApiException(
                     sprintf(
                         '[%d] Error connecting to the API (%s)',
