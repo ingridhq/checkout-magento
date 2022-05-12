@@ -48,6 +48,7 @@ define([
 
             quote.shippingAddress.subscribe(this.shippingAddressObserver.bind(this));
             quote.billingAddress.subscribe(this.billingAddressObserver.bind(this));
+            quote.totals.subscribe(this.quoteTotalObserver.bind(this));
 
             domReady(function () {
                 var checkExist = window.setInterval(function () {
@@ -96,5 +97,9 @@ define([
             // console.log('billingAddress', addr);
         },
 
+        quoteTotalObserver: function () {
+            checkout.suspend();
+            checkout.resume();
+        }
     });
 });
