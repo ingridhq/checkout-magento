@@ -409,7 +409,9 @@ class Address implements ModelInterface, ArrayAccess {
      * @return $this
      */
     public function setCountry($country) {
-        $this->container['country'] = mb_strtoupper($country, 'utf-8');
+        if ($country) {
+            $this->container['country'] = mb_strtoupper($country);
+        }
 
         return $this;
     }
