@@ -128,8 +128,8 @@ define([
             window._sw(function(api) {
                 api.on('shipping_option_changed', function(option) {
                      //console.log('option changed: ', option);
-                     getTotals([]);
                      setShippingInformationAction();
+                     getTotals([]);
                 });
             });
         },
