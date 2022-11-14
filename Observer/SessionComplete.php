@@ -9,6 +9,7 @@ use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
 
 /**
  * SessionComplete on sales_order_place_after
@@ -29,14 +30,22 @@ class SessionComplete implements ObserverInterface {
      */
     private $sessionService;
 
+    /**
+     * @var CartRepositoryInterface
+     */
+    protected $quoteRepository;
+
+
     public function __construct(
         LoggerInterface $logger,
         CheckoutSession $checkoutSession,
-        IngridSessionService $sessionService
+        IngridSessionService $sessionService,
+        CartRepositoryInterface $quoteRepository
     ) {
         $this->logger = $logger;
         $this->checkoutSession = $checkoutSession;
         $this->sessionService = $sessionService;
+        $this->quoteRepository = $quoteRepository;
     }
 
     public function execute(Observer $observer) {
@@ -45,7 +54,9 @@ class SessionComplete implements ObserverInterface {
         try {
             /** @var  \Magento\Sales\Model\Order $order */
             $order = $observer->getEvent()->getData('order');
-            $ingridSessionId = $this->checkoutSession->getQuote()->getIngridSessionId();
+            $quote = $this->quoteRepository->get($order->getQuoteId());
+            $ingridSessionId = $quote->getIngridSessionId();
+
             $orderCtx = ['order_id' => $order->getId(), 'quote_id' => $order->getQuoteId(), 'ingrid_session_id' => $ingridSessionId];
             if ($ingridSessionId === null) {
 
