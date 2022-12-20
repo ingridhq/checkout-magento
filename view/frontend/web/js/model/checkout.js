@@ -88,8 +88,8 @@ define([
             storage.post(config.checkoutUrl, JSON.stringify(postData))
                 .done(function (response) {
                     // console.log('post response ok');
-                    getTotals([]);
                     setShippingInformationAction();
+                    getTotals([]);
                 })
                 .fail(function (response) {
                     // console.log('post response fail', response);
@@ -128,8 +128,8 @@ define([
             window._sw(function(api) {
                 api.on('shipping_option_changed', function(option) {
                      //console.log('option changed: ', option);
-                     getTotals([]);
                      setShippingInformationAction();
+                     getTotals([]);
                 });
             });
         },

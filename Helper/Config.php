@@ -7,6 +7,7 @@ use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\State as MageState;
@@ -54,14 +55,22 @@ class Config extends AbstractHelper {
      * @var MageState
      */
     private $mageState;
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
 
     /**
      * ConfigHelper constructor.
      *
      * @param Context                     $context
      * @param Resolver                    $resolver
+     * @param DirectoryHelper             $directoryHelper
      * @param CustomerRepositoryInterface $customerRepository
      * @param AddressRepositoryInterface  $addressRepository
+     * @param LoggerInterface             $logger
+     * @param MageState                   $mageState
+     * @param StoreManagerInterface       $storeManager
      * @param string                      $code
      * @param string                      $eventPrefix
      */
@@ -73,6 +82,7 @@ class Config extends AbstractHelper {
         AddressRepositoryInterface $addressRepository,
         LoggerInterface $logger,
         MageState $mageState,
+        StoreManagerInterface $storeManager,
         $code = 'ingrid_checkout',
         $eventPrefix = 'ingrid'
     ) {
@@ -85,6 +95,7 @@ class Config extends AbstractHelper {
         $this->directoryHelper = $directoryHelper;
         $this->logger = $logger;
         $this->mageState = $mageState;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -95,6 +106,9 @@ class Config extends AbstractHelper {
      * @return mixed
      */
     public function getConfig(string $config, $store = null) {
+        if (!$store) {
+            $store = $this->storeManager->getStore()->getId();
+        }
         $scope = $this->getScope($store);
         $resp = $this->scopeConfig->getValue('carriers/ingrid/'.$config, $scope, $store);
         return $resp;
@@ -107,10 +121,7 @@ class Config extends AbstractHelper {
      * @return string
      */
     private function getScope($store = null): string {
-        if ($store === null) {
-            return ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
-        }
-        return ScopeInterface::SCOPE_STORES;
+        return ScopeInterface::SCOPE_WEBSITE;
     }
 
     public function isTestMode(): bool {
@@ -187,24 +198,15 @@ class Config extends AbstractHelper {
      * @return string one of 'lbs' or 'kg'
      */
     public function weightUnit(Store $store): string {
-        return $this->storeConfig($store, 'general/locale/weight_unit');
-    }
-
-    /**
-     * @param Store $store
-     * @param string $key
-     * @return mixed
-     */
-    private function storeConfig(Store $store, string $key) {
-        $scope = $this->getScope($store);
-        return $this->scopeConfig->getValue($key, $scope, $store);
+        $unit = $this->getConfig('general/locale/weight_unit', $store->getId());
+        return $unit ?? 'kg';
     }
 
     public function fallbackShippingMethod(Store $store): string {
-        return $this->getConfig('fallback_id', $store);
+        return $this->getConfig('fallback_id', $store->getId());
     }
 
     public function fallbackName(Store $store): string {
-        return $this->getConfig('fallback_name', $store);
+        return $this->getConfig('fallback_name', $store->getId());
     }
 }

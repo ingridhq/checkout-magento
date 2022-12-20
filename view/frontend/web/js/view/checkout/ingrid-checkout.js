@@ -1,4 +1,5 @@
 define([
+    'jquery',
     'ko',
     'uiElement',
     'underscore',
@@ -14,6 +15,7 @@ define([
     'Magento_Checkout/js/action/get-totals'
 
 ], function (
+    $,
     ko,
     Component,
     _,
@@ -46,11 +48,21 @@ define([
 
             quote.shippingAddress.subscribe(this.shippingAddressObserver.bind(this));
             quote.billingAddress.subscribe(this.billingAddressObserver.bind(this));
+            quote.totals.subscribe(this.quoteTotalObserver.bind(this));
 
             domReady(function () {
                 var checkExist = window.setInterval(function () {
                     if (window._sw) {
                         // console.log('_sw found');
+                        $('.opc-wrapper').css("background", "#eeeeee");
+                        $('#klarna_kco').css("visibility", "hidden");
+                        window._sw(function(api) {
+                            api.on('address_changed', function(option) {
+                                $('.opc-wrapper').css("background", "#fff");
+                                $('#klarna_kco').css("visibility", "visible");
+                            })
+                        });
+
                         if (window.checkoutConfig.saveShippingMethodUrl === undefined) {
                             checkout.attachEvents();
                         } else {
@@ -60,7 +72,7 @@ define([
                     } else {
                         // console.log('no _sw yet');
                     }
-                }, 1000);
+                }, 300);
             });
             return this;
         },
@@ -85,5 +97,9 @@ define([
             // console.log('billingAddress', addr);
         },
 
+        quoteTotalObserver: function () {
+            checkout.suspend();
+            checkout.resume();
+        }
     });
 });
