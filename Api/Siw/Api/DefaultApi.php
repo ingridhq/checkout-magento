@@ -150,8 +150,6 @@ class DefaultApi {
                         $body->getCustomer()->getEmail() ? $arrayBody['customer']['email'] = $body->getCustomer()->getEmail():'';
                         $body->getCustomer()->getNationalIdentificationNumber() ? $arrayBody['customer']['national_identification_number'] = $body->getCustomer()->getNationalIdentificationNumber():'';
                         if ($address = $body->getCustomer()->getAddress()) {
-                            //$arrayBody['customer']['address'] = $this->mapAddress($body->getCustomer()->getAddress());
-
                             //address v2
                             $address->getName() ? $arrayBody['customer']["name"] = $address->getName():'';
                             $address->getCareOf() ? $arrayBody['customer']["care_of"] = $address->getCareOf():'';
