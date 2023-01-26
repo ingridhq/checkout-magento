@@ -134,9 +134,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
         try {
             $session = $this->sessionProvider->sessionForCheckout();
             $this->_logger->info('session '.$session->getId());
-            $shippingResult = $session->getResult();
+            $shippingResult = $session->getDeliveryGroups()[0];
 
-            $cat = $session->getResult()->getCategory();
+            $cat = $session->getDeliveryGroups()[0]->getCategory();
 
             $method->setCarrier($this->getCarrierCode());
 

@@ -68,7 +68,8 @@ class Session implements ModelInterface, ArrayAccess {
         'search_address' => '\Ingrid\Checkout\Api\Siw\Model\Address',
         'tos_id' => 'string',
         'shipping_cost' => '\Ingrid\Checkout\Api\Siw\Model\ShippingCost',
-        'result' => '\Ingrid\Checkout\Api\Siw\Model\Result',    ];
+        'result' => '\Ingrid\Checkout\Api\Siw\Model\Result',
+        'delivery_groups' => '\Ingrid\Checkout\Api\Siw\Model\DeliveryGroups[]',    ];
 
     /**
       * Array of property to format mappings. Used for (de)serialization
@@ -89,7 +90,8 @@ class Session implements ModelInterface, ArrayAccess {
         'search_address' => null,
         'tos_id' => null,
         'shipping_cost' => null,
-        'result' => null,    ];
+        'result' => null,
+        'delivery_groups' => null,    ];
 
     /**
      * Array of property to type mappings. Used for (de)serialization
@@ -116,7 +118,7 @@ class Session implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $attributeMap = [
-        'id' => 'id',
+        'id' => 'checkout_session_id',
         'status' => 'status',
         'customer_info' => 'customer_info',
         'cart' => 'cart',
@@ -129,7 +131,8 @@ class Session implements ModelInterface, ArrayAccess {
         'search_address' => 'search_address',
         'tos_id' => 'tos_id',
         'shipping_cost' => 'shipping_cost',
-        'result' => 'result',    ];
+        'result' => 'result',
+        'delivery_groups' => 'delivery_groups',    ];
 
     /**
      * Array of attributes to setter functions (for deserialization of responses)
@@ -150,7 +153,8 @@ class Session implements ModelInterface, ArrayAccess {
         'search_address' => 'setSearchAddress',
         'tos_id' => 'setTosId',
         'shipping_cost' => 'setShippingCost',
-        'result' => 'setResult',    ];
+        'result' => 'setResult',
+        'delivery_groups' => 'setDeliveryGroups',    ];
 
     /**
      * Array of attributes to getter functions (for serialization of requests)
@@ -171,7 +175,8 @@ class Session implements ModelInterface, ArrayAccess {
         'search_address' => 'getSearchAddress',
         'tos_id' => 'getTosId',
         'shipping_cost' => 'getShippingCost',
-        'result' => 'getResult',    ];
+        'result' => 'getResult',
+        'delivery_groups' => 'getDeliveryGroups',    ];
 
     /**
      * Array of attributes where the key is the local name,
@@ -224,7 +229,7 @@ class Session implements ModelInterface, ArrayAccess {
      *                      initializing the model
      */
     public function __construct(array $data = null) {
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['id'] = isset($data['checkout_session_id']) ? $data['checkout_session_id'] : null;
         $this->container['status'] = isset($data['status']) ? $data['status'] : null;
         $this->container['customer_info'] = isset($data['customer_info']) ? $data['customer_info'] : null;
         $this->container['cart'] = isset($data['cart']) ? $data['cart'] : null;
@@ -238,6 +243,7 @@ class Session implements ModelInterface, ArrayAccess {
         $this->container['tos_id'] = isset($data['tos_id']) ? $data['tos_id'] : null;
         $this->container['shipping_cost'] = isset($data['shipping_cost']) ? $data['shipping_cost'] : null;
         $this->container['result'] = isset($data['result']) ? $data['result'] : null;
+        $this->container['delivery_groups'] = isset($data['delivery_groups']) ? $data['delivery_groups'] : null;
     }
 
     /**
@@ -568,6 +574,29 @@ class Session implements ModelInterface, ArrayAccess {
 
         return $this;
     }
+
+    /**
+     * Gets delivery_groups
+     *
+     * @return \Ingrid\Checkout\Api\Siw\Model\DeliveryGroups
+     */
+    public function getDeliveryGroups() {
+        return $this->container['delivery_groups'];
+    }
+
+    /**
+     * Sets delivery_groups
+     *
+     * @param \Ingrid\Checkout\Api\Siw\Model\DeliveryGroups $deliveryGroups delivery_groups
+     *
+     * @return $this
+     */
+    public function setDeliveryGroups($deliveryGroups) {
+        $this->container['delivery_groups'] = $deliveryGroups;
+
+        return $this;
+    }
+
     /**
      * Returns true if offset exists. False otherwise.
      *

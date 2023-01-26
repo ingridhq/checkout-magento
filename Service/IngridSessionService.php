@@ -618,16 +618,16 @@ class IngridSessionService {
 
         $this->log->debug('order id '.$orderId);
 
-        $result = $session->getResult();
+        $result = $session->getDeliveryGroups()[0];
         $shipping = $result->getShipping();
 
-        $ingridSession->setTosId($session->getTosId());
+        $ingridSession->setTosId($result->getTosId());
         $ingridSession->setTest($this->config->isTestMode());
         $ingridSession->setIsCompleted(true);
         $ingridSession->setOrderId((int) $order->getEntityId());
         $ingridSession->setOrderIncrementId($orderId);
         $ingridSession->setCategoryName($result->getCategory()->getName());
-        $ingridSession->setShippingMethod($shipping->getShippingMethod());
+        $ingridSession->setShippingMethod($shipping->getCarrierProductId());
 
         $externalMethodId = $shipping->getExternalMethodId();
         if ($externalMethodId) {
