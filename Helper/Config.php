@@ -162,7 +162,7 @@ class Config extends AbstractHelper {
     }
 
     public function siwBaseUrl(): string {
-        return $this->apiHost().'/v1/siw';
+        return $this->apiHost().'/v1/delivery_checkout';
     }
 
     /**
