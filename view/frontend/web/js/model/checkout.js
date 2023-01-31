@@ -124,13 +124,19 @@ define([
             });
         },
         attachEvents: function () {
-            var self = this;
             window._sw(function(api) {
-                api.on('shipping_option_changed', function(option) {
-                     //console.log('option changed: ', option);
-                     setShippingInformationAction();
-                     getTotals([]);
-                });
+                api.on('data_changed', function(m,b) {
+                    console.log(m);
+                    console.log(b);
+                    if (b.pickup_location_changed) {
+                        $('.opc-wrapper').css("background", "#fff");
+                        $('#klarna_kco').css("visibility", "visible");
+                    }
+                    if (!b.initial_load && b.shipping_method_changed || b.pickup_location_changed) {
+                        setShippingInformationAction();
+                        getTotals([]);
+                    }
+                })
             });
         },
         attachDibsEvents: function () {
