@@ -1,0 +1,30 @@
+<?php
+
+
+/** @var \Ingrid\Checkout\Block\Catalog\Product\IngridWidget $block */
+?>
+<?php if($block->isEnabled()) : ?>
+<div id="ingrid-product-widget">
+</div>
+
+<script type="module" src='<?= $block->getProductWidgetUrl() ?>'>
+    
+</script>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+             "Ingrid_Checkout/js/view/product/ingrid-product-widget":{
+                "id": "ingrid-product-widget",
+                "auth_token": "ingrid-http-auth-token:<?= $block->getProductWidgetKey(); ?>",
+                "country": "SE",
+                "locales": "en-US",
+                "currency": "SEK",
+                "viewed_item": <?= $block->getViewedItem() ?>
+                
+            }
+        }
+    }
+</script>
+<?php endif ?>
+
