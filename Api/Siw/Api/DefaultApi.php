@@ -851,7 +851,7 @@ class DefaultApi {
      * @return \GuzzleHttp\Psr7\Request
      */
     protected function getSessionRequest($id = null) {
-        $resourcePath = '/session.get';
+        $resourcePath = '/session.pull';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];

@@ -189,7 +189,7 @@ class IngridSessionService {
             $this->log->info('no active Ingrid session on checkout session, creating');
             try {
                 $resp = $this->createSession($this->checkoutSession);
-                $this->checkoutSession->getQuote()->setIngridSessionId($resp->getSession()->getId());
+                $this->checkoutSession->getQuote()->setIngridSessionId($resp->getSession()->getId())->save();
                 return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
             } catch (\Exception $e) {
                 $this->checkoutSession->setData(self::SESSION_FALLBACK_KEY, true);
