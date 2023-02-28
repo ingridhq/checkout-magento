@@ -40,7 +40,7 @@ class IngridWidget extends \Magento\Framework\View\Element\Template
         StoreManagerInterface $storeManager,
         \Magento\Framework\Encryption\EncryptorInterface $encryptor,
         \Magento\Framework\Registry $registry,
-        array $data = [],
+        array $data = []
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
