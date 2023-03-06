@@ -35,6 +35,27 @@ define(
               });
               window._ingridPDPWidgetApi.render(config.id, configObject);
             }
+          } else {
+            //create guest cart from viewed item
+            var cart = {
+              "cart_id": "guest",
+              "attributes": [],
+              "total_value": config.viewed_item.price,
+              "items": [
+                  {
+                      "name": config.viewed_item.name,
+                      "price": config.viewed_item.price,
+                      "sku": config.viewed_item.sku
+                  }
+              ]
+            }
+            configObject.cart = cart;
+            if (window._ingridPDPWidgetApi) {
+              window._ingridPDPWidgetApi.addListener("error", (value) => {
+                console.log("Error event: " + value);
+              });
+              window._ingridPDPWidgetApi.render(config.id, configObject);
+            }
           }
         }
       });
