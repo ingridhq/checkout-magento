@@ -1,6 +1,6 @@
 <?php
 /**
- * Result
+ * Address
  *
  * PHP version 5
  *
@@ -32,15 +32,15 @@ use ArrayAccess;
 use Ingrid\Checkout\Api\Siw\ObjectSerializer;
 
 /**
- * Result Class Doc Comment
+ * DeliveryBillingAddress Class Doc Comment
  *
  * @category Class
- * @description Summary of the shipment.
+ * @description Common address entity that used almost everywhere in Ingrid&#x27;s API.
  * @package  Ingrid
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class DeliveryGroups implements ModelInterface, ArrayAccess {
+class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     const DISCRIMINATOR = null;
 
     /**
@@ -48,7 +48,7 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
       *
       * @var string
       */
-    protected static $swaggerModelName = 'DeliveryGroups';
+    protected static $swaggerModelName = 'DeliveryBillingAddress';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -56,14 +56,17 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'shipping' => '\Ingrid\Checkout\Api\Siw\Model\ResultShipping',
-        'category' => '\Ingrid\Checkout\Api\Siw\Model\ResultCategory',
-        'pricing' => '\Ingrid\Checkout\Api\Siw\Model\ResultPricing',
-        'selection' => '\Ingrid\Checkout\Api\Siw\Model\ResultSelection',
-        'delivery_time' => '\Ingrid\Checkout\Api\Siw\Model\ResultDeliveryTime',
-        'tos_id' => 'string',
-        'addresses' => '\Ingrid\Checkout\Api\Siw\Model\Addresses',
-    ];
+        'address_lines' => 'string[]',
+        'city' => 'string',
+        'postal_code' => 'string',
+        'country' => 'string',
+        'street' => 'string',
+        'street_number' => 'string',
+        'email' => 'string',
+        'phone' => 'string',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        ];
 
     /**
       * Array of property to format mappings. Used for (de)serialization
@@ -71,14 +74,17 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'shipping' => null,
-        'category' => null,
-        'pricing' => null,
-        'selection' => null,
-        'delivery_time' => null,
-        'tos_id' => null,
-        'addresses' => null,
-    ];
+        'address_lines' => null,
+        'city' => null,
+        'postal_code' => null,
+        'country' => null,
+        'street' => null,
+        'street_number' => null,
+        'email' => null,
+        'phone' => null,
+        'first_name' => null,
+        'last_name' => null,
+        ];
 
     /**
      * Array of property to type mappings. Used for (de)serialization
@@ -105,14 +111,17 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $attributeMap = [
-        'shipping' => 'shipping',
-        'category' => 'category',
-        'pricing' => 'pricing',
-        'selection' => 'selection',
-        'delivery_time' => 'delivery_time',
-        'tos_id' => 'tos_id',
-        'addresses' => 'addresses',
-    ];
+        'address_lines' => 'address_lines',
+        'city' => 'city',
+        'postal_code' => 'postal_code',
+        'country' => 'country',
+        'street' => 'street',
+        'street_number' => 'street_number',
+        'email' => 'email',
+        'phone' => 'phone',
+        'first_name' => 'first_name',
+        'last_name' => 'last_name',
+        ];
 
     /**
      * Array of attributes to setter functions (for deserialization of responses)
@@ -120,14 +129,17 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $setters = [
-        'shipping' => 'setShipping',
-        'category' => 'setCategory',
-        'pricing' => 'setPricing',
-        'selection' => 'setSelection',
-        'delivery_time' => 'setDeliveryTime',
-        'tos_id' => 'setTosId',
-        'addresses' => 'setAddresses',
-    ];
+        'address_lines' => 'setAddressLines',
+        'city' => 'setCity',
+        'postal_code' => 'setPostalCode',
+        'country' => 'setCountry',
+        'street' => 'setStreet',
+        'street_number' => 'setStreetNumber',
+        'email' => 'setEmail',
+        'phone' => 'setPhone',
+        'first_name' => 'setFirstName',
+        'last_name' => 'setLastName',
+        ];
 
     /**
      * Array of attributes to getter functions (for serialization of requests)
@@ -135,14 +147,17 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $getters = [
-        'shipping' => 'getShipping',
-        'category' => 'getCategory',
-        'pricing' => 'getPricing',
-        'selection' => 'getSelection',
-        'delivery_time' => 'getDeliveryTime',
-        'tos_id' => 'getTosId',
-        'addresses' => 'getAddresses',
-    ];
+        'address_lines' => 'getAddressLines',
+        'city' => 'getCity',
+        'postal_code' => 'getPostalCode',
+        'country' => 'getCountry',
+        'street' => 'getStreet',
+        'street_number' => 'getStreetNumber',
+        'email' => 'getEmail',
+        'phone' => 'getPhone',
+        'first_name' => 'getFirstName',
+        'last_name' => 'getLastName',
+        ];
 
     /**
      * Array of attributes where the key is the local name,
@@ -195,13 +210,16 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      *                      initializing the model
      */
     public function __construct(array $data = null) {
-        $this->container['shipping'] = isset($data['shipping']) ? $data['shipping'] : null;
-        $this->container['category'] = isset($data['category']) ? $data['category'] : null;
-        $this->container['pricing'] = isset($data['pricing']) ? $data['pricing'] : null;
-        $this->container['selection'] = isset($data['selection']) ? $data['selection'] : null;
-        $this->container['delivery_time'] = isset($data['delivery_time']) ? $data['delivery_time'] : null;
-        $this->container['tos_id'] = isset($data['tos_id']) ? $data['tos_id'] : null;
-        $this->container['addresses'] = isset($data['addresses']) ? $data['addresses'] : null;
+        $this->container['address_lines'] = isset($data['address_lines']) ? $data['address_lines'] : null;
+        $this->container['city'] = isset($data['city']) ? $data['city'] : null;
+        $this->container['postal_code'] = isset($data['postal_code']) ? $data['postal_code'] : null;
+        $this->container['country'] = isset($data['country']) ? $data['country'] : null;
+        $this->container['street'] = isset($data['street']) ? $data['street'] : null;
+        $this->container['street_number'] = isset($data['street_number']) ? $data['street_number'] : null;
+        $this->container['email'] = isset($data['email']) ? $data['email'] : null;
+        $this->container['phone'] = isset($data['phone']) ? $data['phone'] : null;
+        $this->container['first_name'] = isset($data['first_name']) ? $data['first_name'] : null;
+        $this->container['last_name'] = isset($data['last_name']) ? $data['last_name'] : null;
     }
 
     /**
@@ -226,155 +244,221 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
     }
 
     /**
-     * Gets shipping
+     * Gets address_lines
      *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultShipping
+     * @return string[]
      */
-    public function getShipping() {
-        return $this->container['shipping'];
+    public function getAddressLines() {
+        return $this->container['address_lines'];
     }
 
     /**
-     * Sets shipping
+     * Sets address_lines
      *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultShipping $shipping shipping
+     * @param string[] $address_lines address_lines
      *
      * @return $this
      */
-    public function setShipping($shipping) {
-        $this->container['shipping'] = $shipping;
+    public function setAddressLines($address_lines) {
+        $this->container['address_lines'] = $address_lines;
 
         return $this;
     }
 
     /**
-     * Gets category
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultCategory
-     */
-    public function getCategory() {
-        return $this->container['category'];
-    }
-
-    /**
-     * Sets category
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultCategory $category category
-     *
-     * @return $this
-     */
-    public function setCategory($category) {
-        $this->container['category'] = $category;
-
-        return $this;
-    }
-
-    /**
-     * Gets pricing
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultPricing
-     */
-    public function getPricing() {
-        return $this->container['pricing'];
-    }
-
-    /**
-     * Sets pricing
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultPricing $pricing pricing
-     *
-     * @return $this
-     */
-    public function setPricing($pricing) {
-        $this->container['pricing'] = $pricing;
-
-        return $this;
-    }
-
-    /**
-     * Gets selection
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultSelection
-     */
-    public function getSelection() {
-        return $this->container['selection'];
-    }
-
-    /**
-     * Sets selection
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultSelection $selection selection
-     *
-     * @return $this
-     */
-    public function setSelection($selection) {
-        $this->container['selection'] = $selection;
-
-        return $this;
-    }
-
-    /**
-     * Gets delivery_time
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultDeliveryTime
-     */
-    public function getDeliveryTime() {
-        return $this->container['delivery_time'];
-    }
-
-    /**
-     * Sets delivery_time
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultDeliveryTime $delivery_time delivery_time
-     *
-     * @return $this
-     */
-    public function setDeliveryTime($delivery_time) {
-        $this->container['delivery_time'] = $delivery_time;
-
-        return $this;
-    }
-
-    /**
-     * Gets tos_id
+     * Gets city
      *
      * @return string
      */
-    public function getTosId() {
-        return $this->container['tos_id'];
+    public function getCity() {
+        return $this->container['city'];
     }
 
     /**
-     * Sets tos_id
+     * Sets city
      *
-     * @param string $tos_id tos_id
+     * @param string $city city
      *
      * @return $this
      */
-    public function setTosId($tos_id) {
-        $this->container['tos_id'] = $tos_id;
+    public function setCity($city) {
+        $this->container['city'] = $city;
 
         return $this;
     }
 
     /**
-     * Gets addresses
+     * Gets postal_code
      *
-     * @return \Ingrid\Checkout\Api\Siw\Model\Addresses[]
+     * @return string
      */
-    public function getAddresses() {
-        return $this->container['addresses'];
+    public function getPostalCode() {
+        return $this->container['postal_code'];
     }
 
     /**
-     * Sets addresses
+     * Sets postal_code
      *
-     * @param \Ingrid\Checkout\Api\Siw\Model\Addresses[] $addresses addresses
+     * @param string $postal_code postal_code
      *
      * @return $this
      */
-    public function setAddresses($addresses) {
-        $this->container['addresses'] = $addresses;
+    public function setPostalCode($postal_code) {
+        $this->container['postal_code'] = $postal_code;
+
+        return $this;
+    }
+
+    /**
+     * Gets country
+     *
+     * @return string
+     */
+    public function getCountry() {
+        return $this->container['country'];
+    }
+
+    /**
+     * Sets country
+     *
+     * @param string $country country
+     *
+     * @return $this
+     */
+    public function setCountry($country) {
+        $this->container['country'] = $country;
+
+        return $this;
+    }
+
+    /**
+     * Gets street
+     *
+     * @return string
+     */
+    public function getStreet() {
+        return $this->container['street'];
+    }
+
+    /**
+     * Sets street
+     *
+     * @param string $street street
+     *
+     * @return $this
+     */
+    public function setStreet($street) {
+        $this->container['street'] = $street;
+
+        return $this;
+    }
+
+    /**
+     * Gets street_number
+     *
+     * @return string
+     */
+    public function getStreetNumber() {
+        return $this->container['street_number'];
+    }
+
+    /**
+     * Sets street_number
+     *
+     * @param string $street_number street_number
+     *
+     * @return $this
+     */
+    public function setStreetNumber($street_number) {
+        $this->container['street_number'] = $street_number;
+
+        return $this;
+    }
+
+    /**
+     * Gets email
+     *
+     * @return string
+     */
+    public function getEmail() {
+        return $this->container['email'];
+    }
+
+    /**
+     * Sets email
+     *
+     * @param string $email email
+     *
+     * @return $this
+     */
+    public function setEmail($email) {
+        $this->container['email'] = $email;
+
+        return $this;
+    }
+
+    /**
+     * Gets phone
+     *
+     * @return string
+     */
+    public function getPhone() {
+        return $this->container['phone'];
+    }
+
+    /**
+     * Sets phone
+     *
+     * @param string $phone phone
+     *
+     * @return $this
+     */
+    public function setPhone($phone) {
+        $this->container['phone'] = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Gets first_name
+     *
+     * @return string
+     */
+    public function getFirstName() {
+        return $this->container['first_name'];
+    }
+
+    /**
+     * Sets first_name
+     *
+     * @param string $first_name first_name
+     *
+     * @return $this
+     */
+    public function setFirstName($first_name) {
+        $this->container['first_name'] = $first_name;
+
+        return $this;
+    }
+
+    /**
+     * Gets last_name
+     *
+     * @return string
+     */
+    public function getLastName() {
+        return $this->container['last_name'];
+    }
+
+    /**
+     * Sets last_name
+     *
+     * @param string $last_name last_name
+     *
+     * @return $this
+     */
+    public function setLastName($last_name) {
+        $this->container['last_name'] = $last_name;
 
         return $this;
     }
