@@ -218,6 +218,15 @@ class IngridSessionService {
             $this->siwClient->updateSession($updateReq);
             $resp = $this->siwClient->getSession($ingridSessionId);
         }
+        //update quote address
+        $addresses = $resp->getSession()->getDeliveryGroups()[0]->getAddresses();
+        if($addresses->getDeliveryAddress() != null && $addresses->getBillingAddress() != null && $quote->getCustomerIsGuest()){
+            $quote->getCustomerEmail() == null ? $quote->setCustomerEmail($addresses->getBillingAddress()->getEmail()):"";
+            $this->mapAddress($quote, $addresses->getDeliveryAddress(), 'shipping');
+            $this->mapAddress($quote, $addresses->getBillingAddress(), 'billing');
+            $quote->save();
+        }
+
         return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
     }
 
@@ -297,7 +306,9 @@ class IngridSessionService {
 
         if ($ci->getEmail() || $ci->getPhone()) {
             $req->setCustomer($ci);
-        } elseif ($ci->getAddress() && $ci->getAddress()->getCountry() && $ci->getAddress()->getCountry() != '') {
+        }
+        if($addr->getPostalCode() && $addr->getCountry()) {
+            $ci->setAddress($addr);
             $req->setCustomer($ci);
         }
 
@@ -629,6 +640,7 @@ class IngridSessionService {
         $ingridSession->setCategoryName($result->getCategory()->getName());
         $ingridSession->setShippingMethod($shipping->getCarrierProductId());
 
+
         $externalMethodId = $shipping->getExternalMethodId();
         if ($externalMethodId) {
             $ingridSession->setExternalMethodId($externalMethodId);
@@ -748,4 +760,28 @@ class IngridSessionService {
 
         $this->siwClient->updateSession($updateReq);
     }
+
+    private function mapAddress($quote, $address, $type): void
+    {
+        if($type == "shipping") {
+            $quote->getShippingAddress()
+                ->setCountryId($address->getCountry())
+                ->setPostcode($address->getPostalcode())
+                ->setCity($address->getCity())
+                ->setFirstname($address->getFirstname())
+                ->setLastname($address->getLastname())
+                ->setStreet($address->getStreet()." ".$address->getStreetNumber())
+                ->setTelephone($address->getPhone());
+        } else {
+            $quote->getBillingAddress()
+                ->setCountryId($address->getCountry())
+                ->setPostcode($address->getPostalcode())
+                ->setCity($address->getCity())
+                ->setFirstname($address->getFirstname())
+                ->setLastname($address->getLastname())
+                ->setStreet($address->getStreet()." ".$address->getStreetNumber())
+                ->setTelephone($address->getPhone());
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Result
+ * CustomerInfo
  *
  * PHP version 5
  *
@@ -32,15 +32,15 @@ use ArrayAccess;
 use Ingrid\Checkout\Api\Siw\ObjectSerializer;
 
 /**
- * Result Class Doc Comment
+ * Addresses Class Doc Comment
  *
  * @category Class
- * @description Summary of the shipment.
+ * @description Contains information about the customer such as name, address, email and mobile phone number.
  * @package  Ingrid
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class DeliveryGroups implements ModelInterface, ArrayAccess {
+class Addresses implements ModelInterface, ArrayAccess {
     const DISCRIMINATOR = null;
 
     /**
@@ -48,7 +48,7 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
       *
       * @var string
       */
-    protected static $swaggerModelName = 'DeliveryGroups';
+    protected static $swaggerModelName = 'Addresses';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -56,14 +56,9 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'shipping' => '\Ingrid\Checkout\Api\Siw\Model\ResultShipping',
-        'category' => '\Ingrid\Checkout\Api\Siw\Model\ResultCategory',
-        'pricing' => '\Ingrid\Checkout\Api\Siw\Model\ResultPricing',
-        'selection' => '\Ingrid\Checkout\Api\Siw\Model\ResultSelection',
-        'delivery_time' => '\Ingrid\Checkout\Api\Siw\Model\ResultDeliveryTime',
-        'tos_id' => 'string',
-        'addresses' => '\Ingrid\Checkout\Api\Siw\Model\Addresses',
-    ];
+        'delivery_address' => '\Ingrid\Checkout\Api\Siw\Model\DeliveryBillingAddress',
+        'billing_address' => '\Ingrid\Checkout\Api\Siw\Model\DeliveryBillingAddress',
+        ];
 
     /**
       * Array of property to format mappings. Used for (de)serialization
@@ -71,13 +66,9 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'shipping' => null,
-        'category' => null,
-        'pricing' => null,
-        'selection' => null,
-        'delivery_time' => null,
-        'tos_id' => null,
-        'addresses' => null,
+        'delivery_address' => null,
+        'billing_address' => null,
+        
     ];
 
     /**
@@ -105,13 +96,8 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $attributeMap = [
-        'shipping' => 'shipping',
-        'category' => 'category',
-        'pricing' => 'pricing',
-        'selection' => 'selection',
-        'delivery_time' => 'delivery_time',
-        'tos_id' => 'tos_id',
-        'addresses' => 'addresses',
+        'delivery_address' => 'delivery_address',
+        'billing_address' => 'billing_address',
     ];
 
     /**
@@ -120,13 +106,8 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $setters = [
-        'shipping' => 'setShipping',
-        'category' => 'setCategory',
-        'pricing' => 'setPricing',
-        'selection' => 'setSelection',
-        'delivery_time' => 'setDeliveryTime',
-        'tos_id' => 'setTosId',
-        'addresses' => 'setAddresses',
+        'delivery_address' => 'setDeliveryAddress',
+        'billing_address' => 'setBillingAddress',
     ];
 
     /**
@@ -135,13 +116,8 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $getters = [
-        'shipping' => 'getShipping',
-        'category' => 'getCategory',
-        'pricing' => 'getPricing',
-        'selection' => 'getSelection',
-        'delivery_time' => 'getDeliveryTime',
-        'tos_id' => 'getTosId',
-        'addresses' => 'getAddresses',
+        'delivery_address' => 'getDeliveryAddress',
+        'billing_address' => 'getBillingAddress',
     ];
 
     /**
@@ -195,13 +171,8 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
      *                      initializing the model
      */
     public function __construct(array $data = null) {
-        $this->container['shipping'] = isset($data['shipping']) ? $data['shipping'] : null;
-        $this->container['category'] = isset($data['category']) ? $data['category'] : null;
-        $this->container['pricing'] = isset($data['pricing']) ? $data['pricing'] : null;
-        $this->container['selection'] = isset($data['selection']) ? $data['selection'] : null;
-        $this->container['delivery_time'] = isset($data['delivery_time']) ? $data['delivery_time'] : null;
-        $this->container['tos_id'] = isset($data['tos_id']) ? $data['tos_id'] : null;
-        $this->container['addresses'] = isset($data['addresses']) ? $data['addresses'] : null;
+        $this->container['delivery_address'] = isset($data['delivery_address']) ? $data['delivery_address'] : null;
+        $this->container['billing_address'] = isset($data['billing_address']) ? $data['billing_address'] : null;
     }
 
     /**
@@ -226,159 +197,49 @@ class DeliveryGroups implements ModelInterface, ArrayAccess {
     }
 
     /**
-     * Gets shipping
+     * Gets delivery_address
      *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultShipping
+     * @return \Ingrid\Checkout\Api\Siw\Model\Address
      */
-    public function getShipping() {
-        return $this->container['shipping'];
+    public function getDeliveryAddress() {
+        return $this->container['delivery_address'];
     }
 
     /**
-     * Sets shipping
+     * Sets delivery_address
      *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultShipping $shipping shipping
+     * @param \Ingrid\Checkout\Api\Siw\Model\Address $delivery_address delivery_address
      *
      * @return $this
      */
-    public function setShipping($shipping) {
-        $this->container['shipping'] = $shipping;
+    public function setDeliveryAddress($delivery_address) {
+        $this->container['delivery_address'] = $delivery_address;
 
         return $this;
     }
 
     /**
-     * Gets category
+     * Gets billing_address
      *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultCategory
+     * @return \Ingrid\Checkout\Api\Siw\Model\Address
      */
-    public function getCategory() {
-        return $this->container['category'];
+    public function getBillingAddress() {
+        return $this->container['billing_address'];
     }
 
     /**
-     * Sets category
+     * Sets billing_address
      *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultCategory $category category
+     * @param \Ingrid\Checkout\Api\Siw\Model\Address $billing_address billing_address
      *
      * @return $this
      */
-    public function setCategory($category) {
-        $this->container['category'] = $category;
+    public function setBillingAddress($billing_address) {
+        $this->container['billing_address'] = $billing_address;
 
         return $this;
     }
-
-    /**
-     * Gets pricing
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultPricing
-     */
-    public function getPricing() {
-        return $this->container['pricing'];
-    }
-
-    /**
-     * Sets pricing
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultPricing $pricing pricing
-     *
-     * @return $this
-     */
-    public function setPricing($pricing) {
-        $this->container['pricing'] = $pricing;
-
-        return $this;
-    }
-
-    /**
-     * Gets selection
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultSelection
-     */
-    public function getSelection() {
-        return $this->container['selection'];
-    }
-
-    /**
-     * Sets selection
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultSelection $selection selection
-     *
-     * @return $this
-     */
-    public function setSelection($selection) {
-        $this->container['selection'] = $selection;
-
-        return $this;
-    }
-
-    /**
-     * Gets delivery_time
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\ResultDeliveryTime
-     */
-    public function getDeliveryTime() {
-        return $this->container['delivery_time'];
-    }
-
-    /**
-     * Sets delivery_time
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\ResultDeliveryTime $delivery_time delivery_time
-     *
-     * @return $this
-     */
-    public function setDeliveryTime($delivery_time) {
-        $this->container['delivery_time'] = $delivery_time;
-
-        return $this;
-    }
-
-    /**
-     * Gets tos_id
-     *
-     * @return string
-     */
-    public function getTosId() {
-        return $this->container['tos_id'];
-    }
-
-    /**
-     * Sets tos_id
-     *
-     * @param string $tos_id tos_id
-     *
-     * @return $this
-     */
-    public function setTosId($tos_id) {
-        $this->container['tos_id'] = $tos_id;
-
-        return $this;
-    }
-
-    /**
-     * Gets addresses
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\Addresses[]
-     */
-    public function getAddresses() {
-        return $this->container['addresses'];
-    }
-
-    /**
-     * Sets addresses
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\Addresses[] $addresses addresses
-     *
-     * @return $this
-     */
-    public function setAddresses($addresses) {
-        $this->container['addresses'] = $addresses;
-
-        return $this;
-    }
-
+    
     /**
      * Returns true if offset exists. False otherwise.
      *
