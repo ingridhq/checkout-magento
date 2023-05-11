@@ -58,6 +58,7 @@ class Addresses implements ModelInterface, ArrayAccess {
     protected static $swaggerTypes = [
         'delivery_address' => '\Ingrid\Checkout\Api\Siw\Model\DeliveryBillingAddress',
         'billing_address' => '\Ingrid\Checkout\Api\Siw\Model\DeliveryBillingAddress',
+        'location' => '\Ingrid\Checkout\Api\Siw\Model\PickupLocation',
         ];
 
     /**
@@ -68,6 +69,7 @@ class Addresses implements ModelInterface, ArrayAccess {
     protected static $swaggerFormats = [
         'delivery_address' => null,
         'billing_address' => null,
+        'location' => null,
         
     ];
 
@@ -98,6 +100,7 @@ class Addresses implements ModelInterface, ArrayAccess {
     protected static $attributeMap = [
         'delivery_address' => 'delivery_address',
         'billing_address' => 'billing_address',
+        'location' => 'location',
     ];
 
     /**
@@ -108,6 +111,7 @@ class Addresses implements ModelInterface, ArrayAccess {
     protected static $setters = [
         'delivery_address' => 'setDeliveryAddress',
         'billing_address' => 'setBillingAddress',
+        'location' => 'setLocation',
     ];
 
     /**
@@ -118,6 +122,7 @@ class Addresses implements ModelInterface, ArrayAccess {
     protected static $getters = [
         'delivery_address' => 'getDeliveryAddress',
         'billing_address' => 'getBillingAddress',
+        'location' => 'getLocation',
     ];
 
     /**
@@ -173,6 +178,7 @@ class Addresses implements ModelInterface, ArrayAccess {
     public function __construct(array $data = null) {
         $this->container['delivery_address'] = isset($data['delivery_address']) ? $data['delivery_address'] : null;
         $this->container['billing_address'] = isset($data['billing_address']) ? $data['billing_address'] : null;
+        $this->container['location'] = isset($data['location']) ? $data['location'] : null;
     }
 
     /**
@@ -236,6 +242,28 @@ class Addresses implements ModelInterface, ArrayAccess {
      */
     public function setBillingAddress($billing_address) {
         $this->container['billing_address'] = $billing_address;
+
+        return $this;
+    }
+
+    /**
+     * Gets location
+     *
+     * @return \Ingrid\Checkout\Api\Siw\Model\PickupLocation
+     */
+    public function getLocation() {
+        return $this->container['location'];
+    }
+
+    /**
+     * Sets location
+     *
+     * @param \Ingrid\Checkout\Api\Siw\Model\PickupLocation $location location
+     *
+     * @return $this
+     */
+    public function setLocation($location) {
+        $this->container['location'] = $location;
 
         return $this;
     }

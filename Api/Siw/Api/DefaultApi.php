@@ -1531,13 +1531,13 @@ class DefaultApi {
             $item->getSku() ? $mapItems[$key]["sku"] = $item->getSku():'';
             $item->getName() ? $mapItems[$key]["name"] = $item->getName():'';
             $item->getAttributes() ? $mapItems[$key]["attributes"] = $item->getAttributes():'';
-            $item->getOutOfStock() ? $mapItems[$key]["out_of_stock"] = $item->getOutOfStock():'';
+            $item->getOutOfStock() === true ? $mapItems[$key]["out_of_stock"] = $item->getOutOfStock() : $mapItems[$key]["out_of_stock"] = false;
             $item->getDimensions() ? $mapItems[$key]["dimensions"] = $item->getDimensions()->getData():'';
             $item->getQuantity() ? $mapItems[$key]["quantity"] = $item->getQuantity():'';
             $item->getWeight() ? $mapItems[$key]["weight"] = $item->getWeight():'';
             $item->getDiscount() ? $mapItems[$key]["discount"] = $item->getDiscount():'';
             $item->getPrice() ? $mapItems[$key]["price"] = $item->getPrice():'';
-        } 
+        }
         return $mapItems;
     }  
 }
