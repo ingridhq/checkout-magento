@@ -230,9 +230,11 @@ class IngridSessionService {
         $addresses = $resp->getSession()->getDeliveryGroups()[0]->getAddresses();
         if($addresses->getDeliveryAddress() != null && $addresses->getBillingAddress() != null){
             $quote->getCustomerEmail() == null ? $quote->setCustomerEmail($addresses->getBillingAddress()->getEmail()):"";
-            $this->mapAddress($quote, $addresses->getDeliveryAddress(), 'shipping');
-            $this->mapAddress($quote, $addresses->getBillingAddress(), 'billing');
-            $quote->save();
+            if($addresses->getDeliveryAddress()->getStreet() != null && $addresses->getBillingAddress()->getStreet() != null){
+                $this->mapAddress($quote, $addresses->getDeliveryAddress(), 'shipping');
+                $this->mapAddress($quote, $addresses->getBillingAddress(), 'billing');
+                $quote->save();
+            }
         }
 
         return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
@@ -328,6 +330,7 @@ class IngridSessionService {
         if($addr->getPostalCode() && $addr->getCountry()) {
             $ci->setAddress($addr);
             $req->setCustomer($ci);
+            $req->setPrefillDeliveryAddress($addr);
         }
 
         $this->log->debug('create new session for quote: '.$quote->getId());

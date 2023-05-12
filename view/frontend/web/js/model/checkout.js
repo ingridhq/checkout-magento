@@ -143,6 +143,11 @@ define([
                         }
                     }
                 })
+                api.on('summary_changed', function(summary) {
+                    if (quote.shippingMethod() != undefined) {
+                        setShippingInformationAction();
+                    }
+                });
             });
         },
         attachDibsEvents: function () {

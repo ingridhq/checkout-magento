@@ -64,6 +64,7 @@ class CreateSessionRequest implements ModelInterface, ArrayAccess {
         'external_id' => 'string',
         'customer' => '\Ingrid\Checkout\Api\Siw\Model\CustomerInfo',
         'search_address' => '\Ingrid\Checkout\Api\Siw\Model\Address',
+        'prefill_delivery_address' => '\Ingrid\Checkout\Api\Siw\Model\Address',
         'locales' => 'string[]',
         'meta' => 'map[string,string]',
         'snippet_configuration' => '\Ingrid\Checkout\Api\Siw\Model\SnippetConfiguration',    ];
@@ -82,6 +83,7 @@ class CreateSessionRequest implements ModelInterface, ArrayAccess {
         'external_id' => null,
         'customer' => null,
         'search_address' => null,
+        'prefill_delivery_address' => null,
         'locales' => null,
         'meta' => null,
         'snippet_configuration' => null,    ];
@@ -119,6 +121,7 @@ class CreateSessionRequest implements ModelInterface, ArrayAccess {
         'external_id' => 'external_id',
         'customer' => 'customer',
         'search_address' => 'search_address',
+        'prefill_delivery_address' => 'prefill_delivery_address',
         'locales' => 'locales',
         'meta' => 'meta',
         'snippet_configuration' => 'snippet_configuration',    ];
@@ -137,6 +140,7 @@ class CreateSessionRequest implements ModelInterface, ArrayAccess {
         'external_id' => 'setExternalId',
         'customer' => 'setCustomer',
         'search_address' => 'setSearchAddress',
+        'prefill_delivery_address' => 'setPrefillDeliveryAddress',
         'locales' => 'setLocales',
         'meta' => 'setMeta',
         'snippet_configuration' => 'setSnippetConfiguration',    ];
@@ -155,6 +159,7 @@ class CreateSessionRequest implements ModelInterface, ArrayAccess {
         'external_id' => 'getExternalId',
         'customer' => 'getCustomer',
         'search_address' => 'getSearchAddress',
+        'prefill_delivery_address' => 'getPrefillDeliveryAddress',
         'locales' => 'getLocales',
         'meta' => 'getMeta',
         'snippet_configuration' => 'getSnippetConfiguration',    ];
@@ -218,6 +223,7 @@ class CreateSessionRequest implements ModelInterface, ArrayAccess {
         $this->container['external_id'] = isset($data['external_id']) ? $data['external_id'] : null;
         $this->container['customer'] = isset($data['customer']) ? $data['customer'] : null;
         $this->container['search_address'] = isset($data['search_address']) ? $data['search_address'] : null;
+        $this->container['prefill_delivery_address'] = isset($data['prefill_delivery_address']) ? $data['prefill_delivery_address'] : null;
         $this->container['locales'] = isset($data['locales']) ? $data['locales'] : null;
         $this->container['meta'] = isset($data['meta']) ? $data['meta'] : null;
         $this->container['snippet_configuration'] = isset($data['snippet_configuration']) ? $data['snippet_configuration'] : null;
@@ -416,6 +422,28 @@ class CreateSessionRequest implements ModelInterface, ArrayAccess {
      */
     public function setSearchAddress($search_address) {
         $this->container['search_address'] = $search_address;
+
+        return $this;
+    }
+
+    /**
+     * Gets prefill_delivery_address
+     *
+     * @return bool
+     */
+    public function getPrefillDeliveryAddress() {
+        return $this->container['prefill_delivery_address'];
+    }
+
+    /**
+     * Sets prefill_delivery_address
+     *
+     * @param bool $prefill_delivery_address prefill_delivery_address
+     *
+     * @return $this
+     */
+    public function setPrefillDeliveryAddress($prefill_delivery_address) {
+        $this->container['prefill_delivery_address'] = $prefill_delivery_address;
 
         return $this;
     }
