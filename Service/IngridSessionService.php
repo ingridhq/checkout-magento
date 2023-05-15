@@ -330,6 +330,9 @@ class IngridSessionService {
         if($addr->getPostalCode() && $addr->getCountry()) {
             $ci->setAddress($addr);
             $req->setCustomer($ci);
+            $addr->setCompanyName($shippingAddr->getCompany());
+            $addr->setFirstName($shippingAddr->getFirstname());
+            $addr->setLastName($shippingAddr->getLastname());
             $req->setPrefillDeliveryAddress($addr);
         }
 
