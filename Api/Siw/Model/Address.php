@@ -57,6 +57,9 @@ class Address implements ModelInterface, ArrayAccess {
       */
     protected static $swaggerTypes = [
         'name' => 'string',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        'company_name' => 'string',
         'care_of' => 'string',
         'attn' => 'string',
         'address_lines' => 'string[]',
@@ -74,6 +77,9 @@ class Address implements ModelInterface, ArrayAccess {
       */
     protected static $swaggerFormats = [
         'name' => null,
+        'first_name' => null,
+        'last_name' => null,
+        'company_name' => null,
         'care_of' => null,
         'attn' => null,
         'address_lines' => null,
@@ -110,6 +116,9 @@ class Address implements ModelInterface, ArrayAccess {
      */
     protected static $attributeMap = [
         'name' => 'name',
+        'first_name' => 'first_name',
+        'last_name' => 'last_name',
+        'company_name' => 'company_name',
         'care_of' => 'care_of',
         'attn' => 'attn',
         'address_lines' => 'address_lines',
@@ -127,6 +136,9 @@ class Address implements ModelInterface, ArrayAccess {
      */
     protected static $setters = [
         'name' => 'setName',
+        'first_name' => 'setFirstName',
+        'last_name' => 'setLastName',
+        'company_name' => 'setCompanyName',
         'care_of' => 'setCareOf',
         'attn' => 'setAttn',
         'address_lines' => 'setAddressLines',
@@ -144,6 +156,9 @@ class Address implements ModelInterface, ArrayAccess {
      */
     protected static $getters = [
         'name' => 'getName',
+        'first_name' => 'getFirstName',
+        'last_name' => 'getLastName',
+        'company_name' => 'getCompanyName',
         'care_of' => 'getCareOf',
         'attn' => 'getAttn',
         'address_lines' => 'getAddressLines',
@@ -206,6 +221,9 @@ class Address implements ModelInterface, ArrayAccess {
      */
     public function __construct(array $data = null) {
         $this->container['name'] = isset($data['name']) ? $data['name'] : null;
+        $this->container['first_name'] = isset($data['first_name']) ? $data['first_name'] : null;
+        $this->container['last_name'] = isset($data['last_name']) ? $data['last_name'] : null;
+        $this->container['company_name'] = isset($data['company_name']) ? $data['company_name'] : null;
         $this->container['care_of'] = isset($data['care_of']) ? $data['care_of'] : null;
         $this->container['attn'] = isset($data['attn']) ? $data['attn'] : null;
         $this->container['address_lines'] = isset($data['address_lines']) ? $data['address_lines'] : null;
@@ -256,6 +274,72 @@ class Address implements ModelInterface, ArrayAccess {
      */
     public function setName($name) {
         $this->container['name'] = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets first_name
+     *
+     * @return string
+     */
+    public function getFirstName() {
+        return $this->container['first_name'];
+    }
+
+    /**
+     * Sets first_name
+     *
+     * @param string $first_name first_name
+     *
+     * @return $this
+     */
+    public function setFirstName($first_name) {
+        $this->container['first_name'] = $first_name;
+
+        return $this;
+    }
+
+    /**
+     * Gets last_name
+     *
+     * @return string
+     */
+    public function getLastName() {
+        return $this->container['last_name'];
+    }
+
+    /**
+     * Sets last_name
+     *
+     * @param string $last_name last_name
+     *
+     * @return $this
+     */
+    public function setLastName($last_name) {
+        $this->container['last_name'] = $last_name;
+
+        return $this;
+    }
+
+    /**
+     * Gets company_name
+     *
+     * @return string
+     */
+    public function getCompanyName() {
+        return $this->container['company_name'];
+    }
+
+    /**
+     * Sets company_name
+     *
+     * @param string $company_name company_name
+     *
+     * @return $this
+     */
+    public function setCompanyName($company_name) {
+        $this->container['company_name'] = $company_name;
 
         return $this;
     }

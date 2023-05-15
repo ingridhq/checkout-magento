@@ -453,6 +453,11 @@ class DefaultApi {
                 if ($body->getSearchAddress()) {
                     $arrayBody['search_sddress'] = $this->mapAddress($body->getSearchAddress());
                 }
+                if ($body->getPrefillDeliveryAddress()) {
+                    $arrayBody['prefill_delivery_address'] = $this->mapAddress($body->getPrefillDeliveryAddress());
+                    $arrayBody['prefill_delivery_address']['email'] = $body->getCustomer()->getEmail();
+                    $arrayBody['prefill_delivery_address']['phone'] = $body->getCustomer()->getPhone();
+                }
                 $jsonBody = $this->json->serialize($arrayBody);
                 $uri = $request->getUri();
                 $url = $uri->getScheme()."://".$uri->getHost()."".$uri->getPath();
@@ -1508,6 +1513,8 @@ class DefaultApi {
      */
     protected function mapAddress($address) {        
         $address->getName() ? $mapAddress["name"] = $address->getName():'';
+        $address->getFirstName() ? $mapAddress["first_name"] = $address->getFirstName():'';
+        $address->getLastName() ? $mapAddress["last_name"] = $address->getLastName():'';
         $address->getCareOf() ? $mapAddress["care_of"] = $address->getCareOf():'';
         $address->getAttn() ? $mapAddress["attn"] = $address->getAttn():'';
         $address->getAddressLines() ? $mapAddress["address_lines"] = $address->getAddressLines():'';
