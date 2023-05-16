@@ -144,8 +144,15 @@ define([
                     }
                 })
                 api.on('summary_changed', function(summary) {
-                    if (quote.shippingMethod() != undefined) {
-                        setShippingInformationAction();
+                    if (summary.delivery_address) {
+                        setShippingInformationAction().done(
+                            function () {
+                                if(window.checkoutConfig.klarna) {
+                                    var updateKlarnaOrder = require('Klarna_Kco/js/action/update-klarna-order');
+                                    updateKlarnaOrder();
+                                }
+                            }
+                        );
                     }
                 });
             });
