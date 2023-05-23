@@ -571,16 +571,11 @@ class IngridSessionService {
     }
 
     public function dimensionsMm(Store $store, Dimensions $dimens): Dimensions {
-        $unit = $this->config->weightUnit($store);
-        $multiple = 10;
-        if ($unit === 'lb' || $unit === 'lbs') {
-            $multiple *= 2.54;
-        }
 
         $out = new Dimensions();
-        $out->setHeight(intval($dimens->getHeight() * $multiple));
-        $out->setWidth(intval($dimens->getWidth() * $multiple));
-        $out->setLength(intval($dimens->getLength() * $multiple));
+        $out->setHeight(intval($dimens->getHeight()));
+        $out->setWidth(intval($dimens->getWidth()));
+        $out->setLength(intval($dimens->getLength()));
 
         return $out;
     }
