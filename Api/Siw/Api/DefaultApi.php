@@ -141,7 +141,7 @@ class DefaultApi {
                 }
 
                 $arrayBody = [
-                    'id' => $body->getId()
+                    'checkout_session_id' => $body->getId()
                 ];
                 $body->getExternalId() ? $arrayBody['external_id'] = $body->getExternalId():'';
                 if ($body->getCustomer()) {
@@ -149,8 +149,18 @@ class DefaultApi {
                         $body->getCustomer()->getPhone() ? $arrayBody['customer']['phone'] = $body->getCustomer()->getPhone():'';
                         $body->getCustomer()->getEmail() ? $arrayBody['customer']['email'] = $body->getCustomer()->getEmail():'';
                         $body->getCustomer()->getNationalIdentificationNumber() ? $arrayBody['customer']['national_identification_number'] = $body->getCustomer()->getNationalIdentificationNumber():'';
-                        if ($body->getCustomer()->getAddress()) {
-                            $arrayBody['customer']['address'] = $this->mapAddress($body->getCustomer()->getAddress());
+                        if ($address = $body->getCustomer()->getAddress()) {
+                            //address v2
+                            $address->getName() ? $arrayBody['customer']["name"] = $address->getName():'';
+                            $address->getCareOf() ? $arrayBody['customer']["care_of"] = $address->getCareOf():'';
+                            $address->getAttn() ? $arrayBody['customer']["attn"] = $address->getAttn():'';
+                            $address->getAddressLines() ? $arrayBody['customer']["address_lines"] = $address->getAddressLines():'';
+                            $address->getCity() ? $arrayBody['customer']["city"] = $address->getCity():'';
+                            $address->getRegion() ? $arrayBody['customer']["region"] = $address->getRegion():'';
+                            $address->getPostalCode() ? $arrayBody['customer']["postal_code"] = $address->getPostalCode():'';
+                            $address->getCountry() ? $arrayBody['customer']["country"] = $address->getCountry():'';
+                            $address->getCoordinates() ? $arrayBody['customer']["coordinates"] = $address->getCoordinates():'';
+                            $address->getDoorCode() ? $arrayBody['customer']["door_code"] = $address->getDoorCode():'';
                         };
                     }
                 };
@@ -442,6 +452,11 @@ class DefaultApi {
 
                 if ($body->getSearchAddress()) {
                     $arrayBody['search_sddress'] = $this->mapAddress($body->getSearchAddress());
+                }
+                if ($body->getPrefillDeliveryAddress()) {
+                    $arrayBody['prefill_delivery_address'] = $this->mapAddress($body->getPrefillDeliveryAddress());
+                    $arrayBody['prefill_delivery_address']['email'] = $body->getCustomer()->getEmail();
+                    $arrayBody['prefill_delivery_address']['phone'] = $body->getCustomer()->getPhone();
                 }
                 $jsonBody = $this->json->serialize($arrayBody);
                 $uri = $request->getUri();
@@ -841,7 +856,7 @@ class DefaultApi {
      * @return \GuzzleHttp\Psr7\Request
      */
     protected function getSessionRequest($id = null) {
-        $resourcePath = '/session.get';
+        $resourcePath = '/session.pull';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
@@ -850,7 +865,7 @@ class DefaultApi {
 
         // query params
         if ($id !== null) {
-            $queryParams['id'] = ObjectSerializer::toQueryValue($id, null);
+            $queryParams['checkout_session_id'] = ObjectSerializer::toQueryValue($id, null);
         }
 
         // body params
@@ -1208,7 +1223,7 @@ class DefaultApi {
                     $curl->addHeader($k, $v[0]);
                 };
                 $arrayBody = [
-                    'id' => $body->getId()
+                    'checkout_session_id' => $body->getId()
                 ];
                 $body->getExternalId() ? $arrayBody['external_id'] = $body->getExternalId():'';
                 if ($body->getSearchAddress()) {
@@ -1498,6 +1513,8 @@ class DefaultApi {
      */
     protected function mapAddress($address) {        
         $address->getName() ? $mapAddress["name"] = $address->getName():'';
+        $address->getFirstName() ? $mapAddress["first_name"] = $address->getFirstName():'';
+        $address->getLastName() ? $mapAddress["last_name"] = $address->getLastName():'';
         $address->getCareOf() ? $mapAddress["care_of"] = $address->getCareOf():'';
         $address->getAttn() ? $mapAddress["attn"] = $address->getAttn():'';
         $address->getAddressLines() ? $mapAddress["address_lines"] = $address->getAddressLines():'';
@@ -1521,13 +1538,13 @@ class DefaultApi {
             $item->getSku() ? $mapItems[$key]["sku"] = $item->getSku():'';
             $item->getName() ? $mapItems[$key]["name"] = $item->getName():'';
             $item->getAttributes() ? $mapItems[$key]["attributes"] = $item->getAttributes():'';
-            $item->getOutOfStock() ? $mapItems[$key]["out_of_stock"] = $item->getOutOfStock():'';
+            $item->getOutOfStock() === true ? $mapItems[$key]["out_of_stock"] = $item->getOutOfStock() : $mapItems[$key]["out_of_stock"] = false;
             $item->getDimensions() ? $mapItems[$key]["dimensions"] = $item->getDimensions()->getData():'';
             $item->getQuantity() ? $mapItems[$key]["quantity"] = $item->getQuantity():'';
             $item->getWeight() ? $mapItems[$key]["weight"] = $item->getWeight():'';
             $item->getDiscount() ? $mapItems[$key]["discount"] = $item->getDiscount():'';
             $item->getPrice() ? $mapItems[$key]["price"] = $item->getPrice():'';
-        } 
+        }
         return $mapItems;
     }  
 }

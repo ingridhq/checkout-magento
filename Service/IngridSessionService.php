@@ -37,6 +37,7 @@ use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
 use Psr\Log\LoggerInterface;
+use Magento\Customer\Api\AddressRepositoryInterface;
 
 class IngridSessionService {
     const SESSION_ID_KEY = 'ingrid_session_id';
@@ -72,6 +73,11 @@ class IngridSessionService {
     private $ingridSessionRepository;
 
     /**
+     * @var AddressRepositoryInterface
+     */
+    private $addressRepository;
+
+    /**
      * IngridSessionProvider constructor.
      */
     public function __construct(
@@ -81,7 +87,8 @@ class IngridSessionService {
         IngridSessionRepository $ingridSessionRepository,
         LoggerInterface $logger,
         SiwClientInterface $siwClient,
-        Config $config
+        Config $config,
+        AddressRepositoryInterface $addressRepository
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->log = $logger;
@@ -92,6 +99,7 @@ class IngridSessionService {
         $this->attributeSetRepository = $attributeSetRepository;
         $this->slugify = new Slugify(['separator' => '_']);
         $this->ingridSessionRepository = $ingridSessionRepository;
+        $this->addressRepository = $addressRepository;
     }
 
     /**
@@ -189,7 +197,7 @@ class IngridSessionService {
             $this->log->info('no active Ingrid session on checkout session, creating');
             try {
                 $resp = $this->createSession($this->checkoutSession);
-                $this->checkoutSession->getQuote()->setIngridSessionId($resp->getSession()->getId());
+                $this->checkoutSession->getQuote()->setIngridSessionId($resp->getSession()->getId())->save();
                 return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
             } catch (\Exception $e) {
                 $this->checkoutSession->setData(self::SESSION_FALLBACK_KEY, true);
@@ -218,6 +226,17 @@ class IngridSessionService {
             $this->siwClient->updateSession($updateReq);
             $resp = $this->siwClient->getSession($ingridSessionId);
         }
+        //update quote address
+        $addresses = $resp->getSession()->getDeliveryGroups()[0]->getAddresses();
+        if($addresses->getDeliveryAddress() != null && $addresses->getBillingAddress() != null){
+            $quote->getCustomerEmail() == null ? $quote->setCustomerEmail($addresses->getBillingAddress()->getEmail()):"";
+            if($addresses->getDeliveryAddress()->getStreet() != null && $addresses->getBillingAddress()->getStreet() != null){
+                $this->mapAddress($quote, $addresses->getDeliveryAddress(), 'shipping');
+                $this->mapAddress($quote, $addresses->getBillingAddress(), 'billing');
+                $quote->save();
+            }
+        }
+
         return new SessionHolder($resp->getSession(), $resp->getHtmlSnippet());
     }
 
@@ -268,12 +287,18 @@ class IngridSessionService {
         $req->setLocales([$locale]);
 
         $shippingAddr = $quote->getShippingAddress();
+        if(!$quote->getCustomerIsGuest()){
+            $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
+            $shippingAddr = $this->addressRepository->getById($shippingAddressId);
+        }
         $addr = new Address();
         $addr->setCity($shippingAddr->getCity());
         $addr->setCountry($shippingAddr->getCountryId());
         $addr->setPostalCode($shippingAddr->getPostcode());
-        if ($shippingAddr->getRegionCode() != '') {
+        if($quote->getCustomerIsGuest()){
             $addr->setRegion($shippingAddr->getRegionCode());
+        }else{
+            $addr->setRegion($shippingAddr->getRegion()->getRegionCode());
         }
 
         $addrLines = self::cleanStreet($shippingAddr->getStreet());
@@ -286,7 +311,11 @@ class IngridSessionService {
         }
 
         $ci = new CustomerInfo();
-        $email = $shippingAddr->getEmail();
+        if($quote->getCustomerIsGuest()){
+            $email = $shippingAddr->getEmail();
+        } else {
+            $email = $quote->getCustomer()->getEmail();
+        }
         if ($email && $email != '') {
             $ci->setEmail($email);
         }
@@ -297,8 +326,14 @@ class IngridSessionService {
 
         if ($ci->getEmail() || $ci->getPhone()) {
             $req->setCustomer($ci);
-        } elseif ($ci->getAddress() && $ci->getAddress()->getCountry() && $ci->getAddress()->getCountry() != '') {
+        }
+        if($addr->getPostalCode() && $addr->getCountry()) {
+            $ci->setAddress($addr);
             $req->setCustomer($ci);
+            $addr->setCompanyName($shippingAddr->getCompany());
+            $addr->setFirstName($shippingAddr->getFirstname());
+            $addr->setLastName($shippingAddr->getLastname());
+            $req->setPrefillDeliveryAddress($addr);
         }
 
         $this->log->debug('create new session for quote: '.$quote->getId());
@@ -536,16 +571,11 @@ class IngridSessionService {
     }
 
     public function dimensionsMm(Store $store, Dimensions $dimens): Dimensions {
-        $unit = $this->config->weightUnit($store);
-        $multiple = 10;
-        if ($unit === 'lb' || $unit === 'lbs') {
-            $multiple *= 2.54;
-        }
 
         $out = new Dimensions();
-        $out->setHeight(intval($dimens->getHeight() * $multiple));
-        $out->setWidth(intval($dimens->getWidth() * $multiple));
-        $out->setLength(intval($dimens->getLength() * $multiple));
+        $out->setHeight(intval($dimens->getHeight()));
+        $out->setWidth(intval($dimens->getWidth()));
+        $out->setLength(intval($dimens->getLength()));
 
         return $out;
     }
@@ -618,16 +648,17 @@ class IngridSessionService {
 
         $this->log->debug('order id '.$orderId);
 
-        $result = $session->getResult();
+        $result = $session->getDeliveryGroups()[0];
         $shipping = $result->getShipping();
 
-        $ingridSession->setTosId($session->getTosId());
+        $ingridSession->setTosId($result->getTosId());
         $ingridSession->setTest($this->config->isTestMode());
         $ingridSession->setIsCompleted(true);
         $ingridSession->setOrderId((int) $order->getEntityId());
         $ingridSession->setOrderIncrementId($orderId);
         $ingridSession->setCategoryName($result->getCategory()->getName());
-        $ingridSession->setShippingMethod($shipping->getShippingMethod());
+        $ingridSession->setShippingMethod($shipping->getCarrierProductId());
+
 
         $externalMethodId = $shipping->getExternalMethodId();
         if ($externalMethodId) {
@@ -636,14 +667,26 @@ class IngridSessionService {
 
         $carrier = $shipping->getCarrier();
         if ($carrier) {
-            $ingridSession->setCarrier($carrier);
+            if ($carrier === 'Instabox') {
+                $ingridSession->setCarrier($carrier.' ('.$shipping->getMeta()['isb.availability_token'].')');
+            } else {
+                $ingridSession->setCarrier($carrier);
+            }
         }
         $product = $shipping->getProduct();
         if ($product) {
             $ingridSession->setProduct($product);
+            $deliveryAddons = $shipping->getDeliveryAddons();
+            if ($deliveryAddons && is_array($deliveryAddons)) {
+                $addons = "";
+                foreach ($deliveryAddons as $addon) {
+                    $addons .= $addon->getExternalAddonId()." ";
+                }
+                $ingridSession->setProduct($product." (". $addons .")");
+            }
         }
 
-        $loc = $shipping->getLocation();
+        $loc = $result->getAddresses()->getLocation();
         if ($loc) {
             $ingridSession->setLocationId($loc->getExternalId());
             $ingridSession->setLocationName($loc->getName());
@@ -748,4 +791,56 @@ class IngridSessionService {
 
         $this->siwClient->updateSession($updateReq);
     }
+
+    private function mapAddress($quote, $address, $type): void
+    {
+        if($quote->getCustomerIsGuest()){
+            if($type == "shipping") {
+                $quote->getShippingAddress()
+                    ->setCountryId($address->getCountry())
+                    ->setPostcode($address->getPostalcode())
+                    ->setCity($address->getCity())
+                    ->setFirstname($address->getFirstname())
+                    ->setLastname($address->getLastname())
+                    ->setStreet($address->getStreet()." ".$address->getStreetNumber())
+                    ->setTelephone($address->getPhone());
+            } else {
+                $quote->getBillingAddress()
+                    ->setCountryId($address->getCountry())
+                    ->setPostcode($address->getPostalcode())
+                    ->setCity($address->getCity())
+                    ->setFirstname($address->getFirstname())
+                    ->setLastname($address->getLastname())
+                    ->setStreet($address->getStreet()." ".$address->getStreetNumber())
+                    ->setTelephone($address->getPhone());
+            }
+        } else {
+            if($type == "shipping") {
+                $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
+                $shippingAddress = $this->addressRepository->getById($shippingAddressId);
+                $shippingAddress
+                    ->setCountryId($address->getCountry())
+                    ->setPostcode($address->getPostalcode())
+                    ->setCity($address->getCity())
+                    ->setFirstname($address->getFirstname())
+                    ->setLastname($address->getLastname())
+                    ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
+                    ->setTelephone($address->getPhone());
+                $this->addressRepository->save($shippingAddress);
+            } else {
+                $billingAddressId = $quote->getCustomer()->getDefaultBilling();
+                $billingAddress = $this->addressRepository->getById($billingAddressId);
+                $billingAddress
+                    ->setCountryId($address->getCountry())
+                    ->setPostcode($address->getPostalcode())
+                    ->setCity($address->getCity())
+                    ->setFirstname($address->getFirstname())
+                    ->setLastname($address->getLastname())
+                    ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
+                    ->setTelephone($address->getPhone());
+                $this->addressRepository->save($billingAddress);
+            }
+        }
+    }
+
 }

@@ -31,6 +31,7 @@ define([
     'use strict';
     var refreshInProcess = false;
     var lastUpdate = null;
+    var lastUpdateDeliveryAddress = null;
 
     var isEqual = function (a, b) {
         return JSON.stringify(a) === JSON.stringify(b);
@@ -52,6 +53,7 @@ define([
          * @param {string} data.address.telephone
          */
         updateData: function(data) {
+            var self = this;
             if (!window._sw) {
                 return;
             }
@@ -88,8 +90,12 @@ define([
             storage.post(config.checkoutUrl, JSON.stringify(postData))
                 .done(function (response) {
                     // console.log('post response ok');
-                    setShippingInformationAction();
-                    getTotals([]);
+                    setShippingInformationAction().done(
+                        function () {
+                            self.updateKlarna();
+                            getTotals([]);
+                        }
+                    );
                 })
                 .fail(function (response) {
                     // console.log('post response fail', response);
@@ -124,14 +130,50 @@ define([
             });
         },
         attachEvents: function () {
-            var self = this;
             window._sw(function(api) {
-                api.on('shipping_option_changed', function(option) {
-                     //console.log('option changed: ', option);
-                     setShippingInformationAction();
-                     getTotals([]);
+                api.on('data_changed', function(m,b) {
+                    if (b.pickup_location_changed) {
+                        $('.opc-wrapper').css("background", "#fff");
+                        $('#klarna_kco').css("visibility", "visible");
+                    }
+                    if (!b.initial_load && b.shipping_method_changed || b.pickup_location_changed || b.delivery_address_changed || b.payment_method_changed || b.price_changed) {
+                        if (quote.shippingMethod() != undefined) {
+                            setShippingInformationAction().done(
+                                function () {
+                                    getTotals([]);
+                                }
+                            );
+                        }
+                    }
+                })
+                api.on('summary_changed', function(summary) {
+                    if (summary.delivery_address) {
+                        if (isEqual(summary.delivery_address, lastUpdateDeliveryAddress)) {
+                             //console.log('no new data, skipping update');
+                            return;
+                        }
+
+                        var ingridAddress = quote.shippingAddress();
+                        ingridAddress.street = summary.delivery_address.address_lines;
+                        ingridAddress.city = summary.delivery_address.city;
+                        ingridAddress.postcode = summary.delivery_address.postal_code;
+                        ingridAddress.countryId = summary.delivery_address.country;
+                        ingridAddress.telephone = summary.delivery_address.phone_number
+                        ingridAddress.firstname = summary.delivery_address.first_name;
+                        ingridAddress.lastname = summary.delivery_address.last_name;
+                        ingridAddress.email = summary.delivery_address.email;
+
+                        quote.shippingAddress(ingridAddress);
+                        lastUpdateDeliveryAddress = summary.delivery_address;
+                    }
                 });
             });
+        },
+        updateKlarna: function() {
+            if(window.checkoutConfig.klarna) {
+                var updateKlarnaOrder = require('Klarna_Kco/js/action/update-klarna-order');
+                updateKlarnaOrder();
+            }
         },
         attachDibsEvents: function () {
             var self = this;

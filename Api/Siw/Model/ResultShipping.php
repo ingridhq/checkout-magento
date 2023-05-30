@@ -57,6 +57,7 @@ class ResultShipping implements ModelInterface, ArrayAccess {
       */
     protected static $swaggerTypes = [
         'shipping_method' => 'string',
+        'carrier_product_id' => 'string',
         'delivery_type' => 'string',
         'carrier' => 'string',
         'product' => 'string',
@@ -76,6 +77,7 @@ class ResultShipping implements ModelInterface, ArrayAccess {
       */
     protected static $swaggerFormats = [
         'shipping_method' => null,
+        'carrier_product_id' => null,
         'delivery_type' => null,
         'carrier' => null,
         'product' => null,
@@ -114,6 +116,7 @@ class ResultShipping implements ModelInterface, ArrayAccess {
      */
     protected static $attributeMap = [
         'shipping_method' => 'shipping_method',
+        'carrier_product_id' => 'carrier_product_id',
         'delivery_type' => 'delivery_type',
         'carrier' => 'carrier',
         'product' => 'product',
@@ -133,6 +136,7 @@ class ResultShipping implements ModelInterface, ArrayAccess {
      */
     protected static $setters = [
         'shipping_method' => 'setShippingMethod',
+        'carrier_product_id' => 'setCarrierProductId',
         'delivery_type' => 'setDeliveryType',
         'carrier' => 'setCarrier',
         'product' => 'setProduct',
@@ -152,6 +156,7 @@ class ResultShipping implements ModelInterface, ArrayAccess {
      */
     protected static $getters = [
         'shipping_method' => 'getShippingMethod',
+        'carrier_product_id' => 'getCarrierProductId',
         'delivery_type' => 'getDeliveryType',
         'carrier' => 'getCarrier',
         'product' => 'getProduct',
@@ -216,6 +221,7 @@ class ResultShipping implements ModelInterface, ArrayAccess {
      */
     public function __construct(array $data = null) {
         $this->container['shipping_method'] = isset($data['shipping_method']) ? $data['shipping_method'] : null;
+        $this->container['carrier_product_id'] = isset($data['carrier_product_id']) ? $data['carrier_product_id'] : null;
         $this->container['delivery_type'] = isset($data['delivery_type']) ? $data['delivery_type'] : null;
         $this->container['carrier'] = isset($data['carrier']) ? $data['carrier'] : null;
         $this->container['product'] = isset($data['product']) ? $data['product'] : null;
@@ -268,6 +274,28 @@ class ResultShipping implements ModelInterface, ArrayAccess {
      */
     public function setShippingMethod($shipping_method) {
         $this->container['shipping_method'] = $shipping_method;
+
+        return $this;
+    }
+
+    /**
+     * Gets carrier_product_id
+     *
+     * @return string
+     */
+    public function getCarrierProductId() {
+        return $this->container['carrier_product_id'];
+    }
+
+    /**
+     * Sets carrier_product_id
+     *
+     * @param string $carrier_product_id Identifier of chosen carrier product, can be used for merchant-specific shipping methods mappings. If external method identifier is defined on carrier product, its value is passed in this field. Otherwise, shipping method from carrier product is passed.
+     *
+     * @return $this
+     */
+    public function setCarrierProductId($carrier_product_id) {
+        $this->container['carrier_product_id'] = $carrier_product_id;
 
         return $this;
     }

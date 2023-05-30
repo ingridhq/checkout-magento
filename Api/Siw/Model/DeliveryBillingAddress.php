@@ -32,7 +32,7 @@ use ArrayAccess;
 use Ingrid\Checkout\Api\Siw\ObjectSerializer;
 
 /**
- * Address Class Doc Comment
+ * DeliveryBillingAddress Class Doc Comment
  *
  * @category Class
  * @description Common address entity that used almost everywhere in Ingrid&#x27;s API.
@@ -40,7 +40,7 @@ use Ingrid\Checkout\Api\Siw\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class Address implements ModelInterface, ArrayAccess {
+class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     const DISCRIMINATOR = null;
 
     /**
@@ -48,7 +48,7 @@ class Address implements ModelInterface, ArrayAccess {
       *
       * @var string
       */
-    protected static $swaggerModelName = 'Address';
+    protected static $swaggerModelName = 'DeliveryBillingAddress';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -56,19 +56,17 @@ class Address implements ModelInterface, ArrayAccess {
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'name' => 'string',
-        'first_name' => 'string',
-        'last_name' => 'string',
-        'company_name' => 'string',
-        'care_of' => 'string',
-        'attn' => 'string',
         'address_lines' => 'string[]',
         'city' => 'string',
-        'region' => 'string',
         'postal_code' => 'string',
         'country' => 'string',
-        'coordinates' => '\Ingrid\Checkout\Api\Siw\Model\Coordinates',
-        'door_code' => 'string',    ];
+        'street' => 'string',
+        'street_number' => 'string',
+        'email' => 'string',
+        'phone' => 'string',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        ];
 
     /**
       * Array of property to format mappings. Used for (de)serialization
@@ -76,19 +74,17 @@ class Address implements ModelInterface, ArrayAccess {
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'name' => null,
-        'first_name' => null,
-        'last_name' => null,
-        'company_name' => null,
-        'care_of' => null,
-        'attn' => null,
         'address_lines' => null,
         'city' => null,
-        'region' => null,
         'postal_code' => null,
         'country' => null,
-        'coordinates' => null,
-        'door_code' => null,    ];
+        'street' => null,
+        'street_number' => null,
+        'email' => null,
+        'phone' => null,
+        'first_name' => null,
+        'last_name' => null,
+        ];
 
     /**
      * Array of property to type mappings. Used for (de)serialization
@@ -115,19 +111,17 @@ class Address implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $attributeMap = [
-        'name' => 'name',
-        'first_name' => 'first_name',
-        'last_name' => 'last_name',
-        'company_name' => 'company_name',
-        'care_of' => 'care_of',
-        'attn' => 'attn',
         'address_lines' => 'address_lines',
         'city' => 'city',
-        'region' => 'region',
         'postal_code' => 'postal_code',
         'country' => 'country',
-        'coordinates' => 'coordinates',
-        'door_code' => 'door_code',    ];
+        'street' => 'street',
+        'street_number' => 'street_number',
+        'email' => 'email',
+        'phone' => 'phone',
+        'first_name' => 'first_name',
+        'last_name' => 'last_name',
+        ];
 
     /**
      * Array of attributes to setter functions (for deserialization of responses)
@@ -135,19 +129,17 @@ class Address implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $setters = [
-        'name' => 'setName',
-        'first_name' => 'setFirstName',
-        'last_name' => 'setLastName',
-        'company_name' => 'setCompanyName',
-        'care_of' => 'setCareOf',
-        'attn' => 'setAttn',
         'address_lines' => 'setAddressLines',
         'city' => 'setCity',
-        'region' => 'setRegion',
         'postal_code' => 'setPostalCode',
         'country' => 'setCountry',
-        'coordinates' => 'setCoordinates',
-        'door_code' => 'setDoorCode',    ];
+        'street' => 'setStreet',
+        'street_number' => 'setStreetNumber',
+        'email' => 'setEmail',
+        'phone' => 'setPhone',
+        'first_name' => 'setFirstName',
+        'last_name' => 'setLastName',
+        ];
 
     /**
      * Array of attributes to getter functions (for serialization of requests)
@@ -155,19 +147,17 @@ class Address implements ModelInterface, ArrayAccess {
      * @var string[]
      */
     protected static $getters = [
-        'name' => 'getName',
-        'first_name' => 'getFirstName',
-        'last_name' => 'getLastName',
-        'company_name' => 'getCompanyName',
-        'care_of' => 'getCareOf',
-        'attn' => 'getAttn',
         'address_lines' => 'getAddressLines',
         'city' => 'getCity',
-        'region' => 'getRegion',
         'postal_code' => 'getPostalCode',
         'country' => 'getCountry',
-        'coordinates' => 'getCoordinates',
-        'door_code' => 'getDoorCode',    ];
+        'street' => 'getStreet',
+        'street_number' => 'getStreetNumber',
+        'email' => 'getEmail',
+        'phone' => 'getPhone',
+        'first_name' => 'getFirstName',
+        'last_name' => 'getLastName',
+        ];
 
     /**
      * Array of attributes where the key is the local name,
@@ -220,19 +210,16 @@ class Address implements ModelInterface, ArrayAccess {
      *                      initializing the model
      */
     public function __construct(array $data = null) {
-        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
-        $this->container['first_name'] = isset($data['first_name']) ? $data['first_name'] : null;
-        $this->container['last_name'] = isset($data['last_name']) ? $data['last_name'] : null;
-        $this->container['company_name'] = isset($data['company_name']) ? $data['company_name'] : null;
-        $this->container['care_of'] = isset($data['care_of']) ? $data['care_of'] : null;
-        $this->container['attn'] = isset($data['attn']) ? $data['attn'] : null;
         $this->container['address_lines'] = isset($data['address_lines']) ? $data['address_lines'] : null;
         $this->container['city'] = isset($data['city']) ? $data['city'] : null;
-        $this->container['region'] = isset($data['region']) ? $data['region'] : null;
         $this->container['postal_code'] = isset($data['postal_code']) ? $data['postal_code'] : null;
         $this->container['country'] = isset($data['country']) ? $data['country'] : null;
-        $this->container['coordinates'] = isset($data['coordinates']) ? $data['coordinates'] : null;
-        $this->container['door_code'] = isset($data['door_code']) ? $data['door_code'] : null;
+        $this->container['street'] = isset($data['street']) ? $data['street'] : null;
+        $this->container['street_number'] = isset($data['street_number']) ? $data['street_number'] : null;
+        $this->container['email'] = isset($data['email']) ? $data['email'] : null;
+        $this->container['phone'] = isset($data['phone']) ? $data['phone'] : null;
+        $this->container['first_name'] = isset($data['first_name']) ? $data['first_name'] : null;
+        $this->container['last_name'] = isset($data['last_name']) ? $data['last_name'] : null;
     }
 
     /**
@@ -257,23 +244,177 @@ class Address implements ModelInterface, ArrayAccess {
     }
 
     /**
-     * Gets name
+     * Gets address_lines
      *
-     * @return string
+     * @return string[]
      */
-    public function getName() {
-        return $this->container['name'];
+    public function getAddressLines() {
+        return $this->container['address_lines'];
     }
 
     /**
-     * Sets name
+     * Sets address_lines
      *
-     * @param string $name name
+     * @param string[] $address_lines address_lines
      *
      * @return $this
      */
-    public function setName($name) {
-        $this->container['name'] = $name;
+    public function setAddressLines($address_lines) {
+        $this->container['address_lines'] = $address_lines;
+
+        return $this;
+    }
+
+    /**
+     * Gets city
+     *
+     * @return string
+     */
+    public function getCity() {
+        return $this->container['city'];
+    }
+
+    /**
+     * Sets city
+     *
+     * @param string $city city
+     *
+     * @return $this
+     */
+    public function setCity($city) {
+        $this->container['city'] = $city;
+
+        return $this;
+    }
+
+    /**
+     * Gets postal_code
+     *
+     * @return string
+     */
+    public function getPostalCode() {
+        return $this->container['postal_code'];
+    }
+
+    /**
+     * Sets postal_code
+     *
+     * @param string $postal_code postal_code
+     *
+     * @return $this
+     */
+    public function setPostalCode($postal_code) {
+        $this->container['postal_code'] = $postal_code;
+
+        return $this;
+    }
+
+    /**
+     * Gets country
+     *
+     * @return string
+     */
+    public function getCountry() {
+        return $this->container['country'];
+    }
+
+    /**
+     * Sets country
+     *
+     * @param string $country country
+     *
+     * @return $this
+     */
+    public function setCountry($country) {
+        $this->container['country'] = $country;
+
+        return $this;
+    }
+
+    /**
+     * Gets street
+     *
+     * @return string
+     */
+    public function getStreet() {
+        return $this->container['street'];
+    }
+
+    /**
+     * Sets street
+     *
+     * @param string $street street
+     *
+     * @return $this
+     */
+    public function setStreet($street) {
+        $this->container['street'] = $street;
+
+        return $this;
+    }
+
+    /**
+     * Gets street_number
+     *
+     * @return string
+     */
+    public function getStreetNumber() {
+        return $this->container['street_number'];
+    }
+
+    /**
+     * Sets street_number
+     *
+     * @param string $street_number street_number
+     *
+     * @return $this
+     */
+    public function setStreetNumber($street_number) {
+        $this->container['street_number'] = $street_number;
+
+        return $this;
+    }
+
+    /**
+     * Gets email
+     *
+     * @return string
+     */
+    public function getEmail() {
+        return $this->container['email'];
+    }
+
+    /**
+     * Sets email
+     *
+     * @param string $email email
+     *
+     * @return $this
+     */
+    public function setEmail($email) {
+        $this->container['email'] = $email;
+
+        return $this;
+    }
+
+    /**
+     * Gets phone
+     *
+     * @return string
+     */
+    public function getPhone() {
+        return $this->container['phone'];
+    }
+
+    /**
+     * Sets phone
+     *
+     * @param string $phone phone
+     *
+     * @return $this
+     */
+    public function setPhone($phone) {
+        $this->container['phone'] = $phone;
 
         return $this;
     }
@@ -322,227 +463,6 @@ class Address implements ModelInterface, ArrayAccess {
         return $this;
     }
 
-    /**
-     * Gets company_name
-     *
-     * @return string
-     */
-    public function getCompanyName() {
-        return $this->container['company_name'];
-    }
-
-    /**
-     * Sets company_name
-     *
-     * @param string $company_name company_name
-     *
-     * @return $this
-     */
-    public function setCompanyName($company_name) {
-        $this->container['company_name'] = $company_name;
-
-        return $this;
-    }
-
-    /**
-     * Gets care_of
-     *
-     * @return string
-     */
-    public function getCareOf() {
-        return $this->container['care_of'];
-    }
-
-    /**
-     * Sets care_of
-     *
-     * @param string $care_of care_of
-     *
-     * @return $this
-     */
-    public function setCareOf($care_of) {
-        $this->container['care_of'] = $care_of;
-
-        return $this;
-    }
-
-    /**
-     * Gets attn
-     *
-     * @return string
-     */
-    public function getAttn() {
-        return $this->container['attn'];
-    }
-
-    /**
-     * Sets attn
-     *
-     * @param string $attn attn
-     *
-     * @return $this
-     */
-    public function setAttn($attn) {
-        $this->container['attn'] = $attn;
-
-        return $this;
-    }
-
-    /**
-     * Gets address_lines
-     *
-     * @return string[]
-     */
-    public function getAddressLines() {
-        return $this->container['address_lines'];
-    }
-
-    /**
-     * Sets address_lines
-     *
-     * @param string[] $address_lines address_lines
-     *
-     * @return $this
-     */
-    public function setAddressLines($address_lines) {
-        $this->container['address_lines'] = $address_lines;
-
-        return $this;
-    }
-
-    /**
-     * Gets city
-     *
-     * @return string
-     */
-    public function getCity() {
-        return $this->container['city'];
-    }
-
-    /**
-     * Sets city
-     *
-     * @param string $city city
-     *
-     * @return $this
-     */
-    public function setCity($city) {
-        $this->container['city'] = $city;
-
-        return $this;
-    }
-
-    /**
-     * Gets region
-     *
-     * @return string
-     */
-    public function getRegion() {
-        return $this->container['region'];
-    }
-
-    /**
-     * Sets region
-     *
-     * @param string $region region
-     *
-     * @return $this
-     */
-    public function setRegion($region) {
-        $this->container['region'] = $region;
-
-        return $this;
-    }
-
-    /**
-     * Gets postal_code
-     *
-     * @return string
-     */
-    public function getPostalCode() {
-        return $this->container['postal_code'];
-    }
-
-    /**
-     * Sets postal_code
-     *
-     * @param string $postal_code postal_code
-     *
-     * @return $this
-     */
-    public function setPostalCode($postal_code) {
-        $this->container['postal_code'] = $postal_code;
-
-        return $this;
-    }
-
-    /**
-     * Gets country
-     *
-     * @return string
-     */
-    public function getCountry() {
-        return $this->container['country'];
-    }
-
-    /**
-     * Sets country
-     *
-     * @param string $country Country should be specified as two uppercase letters (ISO Alpha-2). Example `SE` for Sweden, `ES` for Spain.
-     *
-     * @return $this
-     */
-    public function setCountry($country) {
-        if ($country) {
-            $this->container['country'] = mb_strtoupper($country);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Gets coordinates
-     *
-     * @return \Ingrid\Checkout\Api\Siw\Model\Coordinates
-     */
-    public function getCoordinates() {
-        return $this->container['coordinates'];
-    }
-
-    /**
-     * Sets coordinates
-     *
-     * @param \Ingrid\Checkout\Api\Siw\Model\Coordinates $coordinates coordinates
-     *
-     * @return $this
-     */
-    public function setCoordinates($coordinates) {
-        $this->container['coordinates'] = $coordinates;
-
-        return $this;
-    }
-
-    /**
-     * Gets door_code
-     *
-     * @return string
-     */
-    public function getDoorCode() {
-        return $this->container['door_code'];
-    }
-
-    /**
-     * Sets door_code
-     *
-     * @param string $door_code door_code
-     *
-     * @return $this
-     */
-    public function setDoorCode($door_code) {
-        $this->container['door_code'] = $door_code;
-
-        return $this;
-    }
     /**
      * Returns true if offset exists. False otherwise.
      *

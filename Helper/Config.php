@@ -110,7 +110,9 @@ class Config extends AbstractHelper {
             $store = $this->storeManager->getStore()->getId();
         }
         $scope = $this->getScope($store);
-        $resp = $this->scopeConfig->getValue('carriers/ingrid/'.$config, $scope, $store);
+        $websiteId = $this->storeManager->getStore($store)->getWebsite()->getId();
+        $resp = $this->scopeConfig->getValue('carriers/ingrid/' . $config, $scope, $websiteId);
+        
         return $resp;
     }
 
@@ -162,7 +164,7 @@ class Config extends AbstractHelper {
     }
 
     public function siwBaseUrl(): string {
-        return $this->apiHost().'/v1/siw';
+        return $this->apiHost().'/v1/delivery_checkout';
     }
 
     /**

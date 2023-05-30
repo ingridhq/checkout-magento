@@ -94,7 +94,10 @@ class SessionComplete implements ObserverInterface {
 
             $this->sessionService->complete($ingridSessionId, $order);
         } catch (\Exception $e) {
-            $this->logger->error('failed to complete session: '.$e->getMessage(), $orderCtx);
+            $this->logger->error('Failed to complete session: ' . $e->getMessage());
+            if (isset($orderCtx)) {
+                $this->logger->error('Order data: ' . json_encode($orderCtx));
+            }
         }
     }
 }
