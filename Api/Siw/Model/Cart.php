@@ -64,7 +64,9 @@ class Cart implements ModelInterface, ArrayAccess {
         'shipping_date' => '\Ingrid\Checkout\Api\Siw\Model\DateTimeRange',
         'items' => '\Ingrid\Checkout\Api\Siw\Model\CartItem[]',
         'cart_id' => 'string',
-        'vouchers' => 'string[]',    ];
+        'vouchers' => 'string[]',
+        'attributes' => 'string[]',
+    ];
 
     /**
       * Array of property to format mappings. Used for (de)serialization
@@ -80,7 +82,9 @@ class Cart implements ModelInterface, ArrayAccess {
         'shipping_date' => null,
         'items' => null,
         'cart_id' => null,
-        'vouchers' => null,    ];
+        'vouchers' => null,
+        'attributes' => null,
+    ];
 
     /**
      * Array of property to type mappings. Used for (de)serialization
@@ -115,7 +119,9 @@ class Cart implements ModelInterface, ArrayAccess {
         'shipping_date' => 'shipping_date',
         'items' => 'items',
         'cart_id' => 'cart_id',
-        'vouchers' => 'vouchers',    ];
+        'vouchers' => 'vouchers',
+        'attributes' => 'attributes',
+    ];
 
     /**
      * Array of attributes to setter functions (for deserialization of responses)
@@ -131,7 +137,9 @@ class Cart implements ModelInterface, ArrayAccess {
         'shipping_date' => 'setShippingDate',
         'items' => 'setItems',
         'cart_id' => 'setCartId',
-        'vouchers' => 'setVouchers',    ];
+        'vouchers' => 'setVouchers',
+        'attributes' => 'setAttributes',
+    ];
 
     /**
      * Array of attributes to getter functions (for serialization of requests)
@@ -147,7 +155,9 @@ class Cart implements ModelInterface, ArrayAccess {
         'shipping_date' => 'getShippingDate',
         'items' => 'getItems',
         'cart_id' => 'getCartId',
-        'vouchers' => 'getVouchers',    ];
+        'vouchers' => 'getVouchers',
+        'attributes' => 'getAttributes',
+    ];
 
     /**
      * Array of attributes where the key is the local name,
@@ -209,6 +219,7 @@ class Cart implements ModelInterface, ArrayAccess {
         $this->container['items'] = isset($data['items']) ? $data['items'] : null;
         $this->container['cart_id'] = isset($data['cart_id']) ? $data['cart_id'] : null;
         $this->container['vouchers'] = isset($data['vouchers']) ? $data['vouchers'] : null;
+        $this->container['attributes'] = isset($data['attributes']) ? $data['attributes'] : null;
     }
 
     /**
@@ -429,6 +440,29 @@ class Cart implements ModelInterface, ArrayAccess {
 
         return $this;
     }
+
+    /**
+     * Gets attributes
+     *
+     * @return string[]
+     */
+    public function getAttributes() {
+        return $this->container['attributes'];
+    }
+
+    /**
+     * Sets attributes
+     *
+     * @param string[] $attributes attributes
+     *
+     * @return $this
+     */
+    public function setAttributes($attributes) {
+        $this->container['attributes'] = $attributes;
+
+        return $this;
+    }
+
     /**
      * Returns true if offset exists. False otherwise.
      *
