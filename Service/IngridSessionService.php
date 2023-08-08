@@ -38,6 +38,7 @@ use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Catalog\Model\ProductRepository;
 
 class IngridSessionService {
     const SESSION_ID_KEY = 'ingrid_session_id';
@@ -78,6 +79,16 @@ class IngridSessionService {
     private $addressRepository;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
      * IngridSessionProvider constructor.
      */
     public function __construct(
@@ -88,7 +99,8 @@ class IngridSessionService {
         LoggerInterface $logger,
         SiwClientInterface $siwClient,
         Config $config,
-        AddressRepositoryInterface $addressRepository
+        AddressRepositoryInterface $addressRepository,
+        ProductRepository $productRepository
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->log = $logger;
@@ -100,6 +112,7 @@ class IngridSessionService {
         $this->slugify = new Slugify(['separator' => '_']);
         $this->ingridSessionRepository = $ingridSessionRepository;
         $this->addressRepository = $addressRepository;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -374,6 +387,16 @@ class IngridSessionService {
                 $vouchers = [mb_strtolower($couponCode)];
             }
         }
+        //set store code in cart attributes[]
+        $store = $quote->getStore();
+        $storeCode = $store->getCode();
+        $label = $this->slugify->slugify('store');
+        $value = $this->slugify->slugify($storeCode);
+        $keyset = $label.':'.$value;
+        $attrs[] = $keyset;
+        $attributes = [];
+        $attributes[] = $keyset;
+        $cart->setAttributes($attributes);
 
         if ($quote->getExtensionAttributes() != null) {
             $shippingAssignments = $quote->getExtensionAttributes()->getShippingAssignments();
@@ -437,6 +460,32 @@ class IngridSessionService {
                 $keyset = $label.':'.$value;
                 $attrs[] = $keyset;
                 $this->log->debug('item order options: '.$keyset, $logCtx);
+            }
+        }
+        //custom attributes
+        $_product = $this->productRepository->get($product->getSku());
+        $attributes = $_product->getAttributes();
+        foreach ($attributes as $attribute) {
+            $attributesToSend = $this->config->getProductCustomAttributes($store);
+            if (!in_array($attribute->getAttributeCode(), $attributesToSend) || !$attribute->getFrontend()->getValue($_product)) {
+                continue;
+            }
+            if ($attribute->getFrontendInput() == 'multiselect') {
+                $values = $attribute->getFrontend()->getValue($_product);
+                $values = explode(',', $values);
+                foreach ($values as $value) {
+                    $label = $this->slugify->slugify($attribute->getFrontendLabel());
+                    $value = $this->slugify->slugify($value);
+                    $keyset = $label.':'.$value;
+                    $attrs[] = $keyset;
+                    $this->log->debug('item custom attributes: '.$keyset, $logCtx);
+                }
+            } else {
+                $label = $this->slugify->slugify($attribute->getFrontendLabel());
+                $value = $this->slugify->slugify($attribute->getFrontend()->getValue($_product));
+                $keyset = $label.':'.$value;
+                $attrs[] = $keyset;
+                $this->log->debug('item custom attributes: '.$keyset, $logCtx);
             }
         }
         if (array_key_exists('is_downloadable', $opts) && $opts['is_downloadable']) {

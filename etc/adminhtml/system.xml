@@ -49,6 +49,11 @@
                         <field id="product_widget_active">1</field>
                     </depends>
                 </field>
+                <field id="product_custom_attributes" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Product custom attributes</label>
+                    <source_model>\Ingrid\Checkout\Model\Config\Source\ProductAttributes</source_model>
+                    <comment>Selected attributes will sent to ingrid.</comment>
+                </field>
             </group>
         </section>
     </system>
