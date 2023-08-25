@@ -232,7 +232,9 @@ class IngridSessionService {
         }
         $diff = (bool)count(array_diff($mcart, $ingridcart));
         $diff2 = (bool)count(array_diff($ingridcart, $mcart));
-        if ($diff || $diff2) {
+
+        $quoteStoreCode = $quote->getStore()->getCode();
+        if ($diff || $diff2 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
             $updateReq = new UpdateSessionRequest();
             $updateReq->setId($ingridSessionId);
             $updateReq->setCart($this->makeCart($quote));
