@@ -74,7 +74,7 @@ class Briqpay extends \Magento\Checkout\Controller\Action
             $briqpayCheckout->initCheckout();
         }
         $response = [];
-        $blocks = ['cart','messages','briqpay'];
+        $blocks = ['cart','messages','briqpay','coupon','newsletter'];
         $response['ok'] = true;
         if ($blocks) {
             $this->_view->loadLayout('briqpay_checkout_order_update');
