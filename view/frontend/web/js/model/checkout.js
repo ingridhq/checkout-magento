@@ -170,7 +170,7 @@ define([
             });
         },
         updateKlarna: function() {
-            if(window.checkoutConfig.klarna) {
+            if(window.checkoutConfig.klarna && window.checkoutConfig.klarna.isKssEnabled) {
                 var updateKlarnaOrder = require('Klarna_Kco/js/action/update-klarna-order');
                 updateKlarnaOrder();
             }
