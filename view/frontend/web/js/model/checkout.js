@@ -12,10 +12,11 @@ define([
     'Magento_Checkout/js/model/quote',
     'Ingrid_Checkout/js/model/config',
     'Magento_Checkout/js/action/get-totals',
-    'Magento_Checkout/js/action/set-shipping-information'
+    'Magento_Checkout/js/action/set-shipping-information',
+    'Magento_Checkout/js/checkout-data',
 ], function (
     $,
-    uiRegistry,
+    registry,
     mageurl,
     storage,
     _,
@@ -27,6 +28,7 @@ define([
     config,
     getTotals,
     setShippingInformationAction,
+    checkoutData,
 ) {
     'use strict';
     var refreshInProcess = false;
@@ -152,7 +154,6 @@ define([
                              //console.log('no new data, skipping update');
                             return;
                         }
-
                         var ingridAddress = quote.shippingAddress();
                         ingridAddress.street = summary.delivery_address.address_lines;
                         ingridAddress.city = summary.delivery_address.city;
@@ -162,15 +163,50 @@ define([
                         ingridAddress.firstname = summary.delivery_address.first_name;
                         ingridAddress.lastname = summary.delivery_address.last_name;
                         ingridAddress.email = summary.delivery_address.email;
+                        ingridAddress.region = summary.delivery_address.region;
+                        ingridAddress.regionCode = summary.delivery_address.region_code;
 
                         quote.shippingAddress(ingridAddress);
+                        //stanard magento checkout
+                        if($('#shipping-new-address-form').length > 0) {
+                            if(quote.guestEmail == null) {
+                                quote.guestEmail = summary.delivery_address.email;
+                                registry.set('index = customer-email',summary.delivery_address.email);
+                            }
+                        
+                            registry.async('checkoutProvider')(function (checkoutProvider) {
+                                var shippingAddressData = checkoutData.getShippingAddressFromData();
+                                registry.get('dataScope = shippingAddress.telephone').value(summary.delivery_address.phone_number);
+                                registry.get('dataScope = shippingAddress.firstname').value(summary.delivery_address.first_name);
+                                registry.get('dataScope = shippingAddress.lastname').value(summary.delivery_address.last_name);
+                                registry.get('dataScope = shippingAddress.street.0').value(summary.delivery_address.address_lines[0]);
+                                registry.get('dataScope = shippingAddress.city').value(summary.delivery_address.city);
+                                registry.get('dataScope = shippingAddress.country_id').value(summary.delivery_address.country);
+                                registry.get('dataScope = shippingAddress.postcode').value(summary.delivery_address.postal_code);
+                                let regions = Object.entries(registry.get('dataScope = shippingAddress.region_id').indexedOptions);
+                                regions.filter(function ([key, region]) {
+                                    if(region.title == summary.delivery_address.region) {
+                                        registry.get('dataScope = shippingAddress.region_id').value(region.value);
+                                    }
+                                });
+                                var shippingAddressData = checkoutData.getShippingAddressFromData();
+                
+                                if (shippingAddressData) {
+                                    checkoutProvider.set(
+                                        'shippingAddress',
+                                        $.extend(true, {}, checkoutProvider.get('shippingAddress'), shippingAddressData)
+                                    );
+                                }
+                            });
+                        }
+
                         lastUpdateDeliveryAddress = summary.delivery_address;
                     }
                 });
             });
         },
         updateKlarna: function() {
-            if(window.checkoutConfig.klarna && window.checkoutConfig.klarna.isKssEnabled) {
+            if(window.checkoutConfig.klarna) {
                 var updateKlarnaOrder = require('Klarna_Kco/js/action/update-klarna-order');
                 updateKlarnaOrder();
             }
@@ -188,7 +224,7 @@ define([
                         success: function (response) {
                             window._dibsCheckout.freezeCheckout();
                             window._dibsCheckout.thawCheckout();
-                            var dibsCheckout = uiRegistry.get('nwtdibsCheckout');
+                            var dibsCheckout = registry.get('nwtdibsCheckout');
                             if (jQuery.parseJSON(response).updates) {
                                 var blocks = jQuery.parseJSON(response).updates;
                                 var div = null;

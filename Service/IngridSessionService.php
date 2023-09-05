@@ -869,6 +869,10 @@ class IngridSessionService {
             if($type == "shipping") {
                 $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
+                if($address->getCountry() != $shippingAddress->getCountryId()){
+                    $shippingAddress->setRegionId('');
+                    $shippingAddress->setRegion(null);
+                }
                 $shippingAddress
                     ->setCountryId($address->getCountry())
                     ->setPostcode($address->getPostalcode())
@@ -881,6 +885,10 @@ class IngridSessionService {
             } else {
                 $billingAddressId = $quote->getCustomer()->getDefaultBilling();
                 $billingAddress = $this->addressRepository->getById($billingAddressId);
+                if($address->getCountry() != $billingAddress->getCountryId()){
+                    $billingAddress->setRegionId('');
+                    $billingAddress->setRegion(null);
+                }
                 $billingAddress
                     ->setCountryId($address->getCountry())
                     ->setPostcode($address->getPostalcode())

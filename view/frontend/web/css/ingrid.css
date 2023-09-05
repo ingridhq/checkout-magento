@@ -1,3 +1,12 @@
+#co-shipping-form {
+    display: none;
+}
+.shipping-address-items, .new-address-popup {
+    display: none;
+}
+.checkout-shipping-method .step-title {
+    display: none;
+}
 .loading-mask {
     display: none !important;
 }
