@@ -39,6 +39,7 @@ use Magento\Store\Model\Store;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Catalog\Model\ProductRepository;
+use Magento\Directory\Model\RegionFactory;
 
 class IngridSessionService {
     const SESSION_ID_KEY = 'ingrid_session_id';
@@ -89,6 +90,11 @@ class IngridSessionService {
     private $productRepository;
 
     /**
+     * @var RegionFactory
+     */
+    private $regionFactory;
+
+    /**
      * IngridSessionProvider constructor.
      */
     public function __construct(
@@ -100,7 +106,8 @@ class IngridSessionService {
         SiwClientInterface $siwClient,
         Config $config,
         AddressRepositoryInterface $addressRepository,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        RegionFactory $regionFactory
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->log = $logger;
@@ -113,6 +120,7 @@ class IngridSessionService {
         $this->ingridSessionRepository = $ingridSessionRepository;
         $this->addressRepository = $addressRepository;
         $this->productRepository = $productRepository;
+        $this->regionFactory = $regionFactory;
     }
 
     /**
@@ -845,6 +853,12 @@ class IngridSessionService {
 
     private function mapAddress($quote, $address, $type): void
     {
+        $region = $this->regionFactory->create();
+        if($address->getCountry() == "US"){
+            $region->loadByCode($address->getRegion(), $address->getCountry());
+        } else {
+            $region->loadByName($address->getRegion(), $address->getCountry());
+        }
         if($quote->getCustomerIsGuest()){
             if($type == "shipping") {
                 $quote->getShippingAddress()
@@ -854,7 +868,10 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet($address->getStreet()." ".$address->getStreetNumber())
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
             } else {
                 $quote->getBillingAddress()
                     ->setCountryId($address->getCountry())
@@ -863,16 +880,15 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet($address->getStreet()." ".$address->getStreetNumber())
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
             }
         } else {
             if($type == "shipping") {
                 $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
-                if($address->getCountry() != $shippingAddress->getCountryId()){
-                    $shippingAddress->setRegionId('');
-                    $shippingAddress->setRegion(null);
-                }
                 $shippingAddress
                     ->setCountryId($address->getCountry())
                     ->setPostcode($address->getPostalcode())
@@ -880,15 +896,16 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionId($region->getId());
+                $shippingAddress->getRegion()
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
                 $this->addressRepository->save($shippingAddress);
             } else {
                 $billingAddressId = $quote->getCustomer()->getDefaultBilling();
                 $billingAddress = $this->addressRepository->getById($billingAddressId);
-                if($address->getCountry() != $billingAddress->getCountryId()){
-                    $billingAddress->setRegionId('');
-                    $billingAddress->setRegion(null);
-                }
                 $billingAddress
                     ->setCountryId($address->getCountry())
                     ->setPostcode($address->getPostalcode())
@@ -896,7 +913,12 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionId($region->getId());
+                $billingAddress->getRegion()
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
                 $this->addressRepository->save($billingAddress);
             }
         }
