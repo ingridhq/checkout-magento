@@ -14,6 +14,7 @@ define([
     'Magento_Checkout/js/action/get-totals',
     'Magento_Checkout/js/action/set-shipping-information',
     'Magento_Checkout/js/checkout-data',
+    'Magento_Customer/js/customer-data',
 ], function (
     $,
     registry,
@@ -29,6 +30,7 @@ define([
     getTotals,
     setShippingInformationAction,
     checkoutData,
+    customerData
 ) {
     'use strict';
     var refreshInProcess = false;
@@ -183,10 +185,13 @@ define([
                                 registry.get('dataScope = shippingAddress.city').value(summary.delivery_address.city);
                                 registry.get('dataScope = shippingAddress.country_id').value(summary.delivery_address.country);
                                 registry.get('dataScope = shippingAddress.postcode').value(summary.delivery_address.postal_code);
-                                let regions = Object.entries(registry.get('dataScope = shippingAddress.region_id').indexedOptions);
+                                var countryData = customerData.get('directory-data');
+                                var regions = Object.entries(countryData()[summary.delivery_address.country].regions);
+
+                                //let regions = Object.entries(registry.get('dataScope = shippingAddress.region_id').indexedOptions);
                                 regions.filter(function ([key, region]) {
-                                    if(region.title == summary.delivery_address.region) {
-                                        registry.get('dataScope = shippingAddress.region_id').value(region.value);
+                                    if(region.code == summary.delivery_address.region || region.name == summary.delivery_address.region) {
+                                        registry.get('dataScope = shippingAddress.region_id').value(key);
                                     }
                                 });
                                 var shippingAddressData = checkoutData.getShippingAddressFromData();
