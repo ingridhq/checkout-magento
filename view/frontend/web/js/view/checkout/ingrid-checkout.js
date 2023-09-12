@@ -46,9 +46,9 @@ define([
             var self = this;
             this._super();
 
-            quote.shippingAddress.subscribe(this.shippingAddressObserver.bind(this));
-            quote.billingAddress.subscribe(this.billingAddressObserver.bind(this));
-            quote.totals.subscribe(this.quoteTotalObserver.bind(this));
+            //quote.shippingAddress.subscribe(this.shippingAddressObserver.bind(this));
+            //quote.billingAddress.subscribe(this.billingAddressObserver.bind(this));
+            //quote.totals.subscribe(this.quoteTotalObserver.bind(this));
 
             domReady(function () {
                 var checkExist = window.setInterval(function () {

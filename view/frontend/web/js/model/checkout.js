@@ -134,6 +134,7 @@ define([
             });
         },
         attachEvents: function () {
+            var self = this;
             window._sw(function(api) {
                 api.on('data_changed', function(m,b) {
                     if (b.pickup_location_changed) {
@@ -206,14 +207,19 @@ define([
                         }
 
                         lastUpdateDeliveryAddress = summary.delivery_address;
+                        self.updateKlarna();
                     }
                 });
             });
         },
         updateKlarna: function() {
-            if(window.checkoutConfig.klarna) {
+            if(window.checkoutConfig.klarna && $('.checkout-klarna-index').length > 0) {
                 var updateKlarnaOrder = require('Klarna_Kco/js/action/update-klarna-order');
-                updateKlarnaOrder();
+                setShippingInformationAction().done(
+                    function () {
+                        updateKlarnaOrder();
+                    }
+                );
             }
         },
         attachDibsEvents: function () {
