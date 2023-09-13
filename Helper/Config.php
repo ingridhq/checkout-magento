@@ -211,4 +211,18 @@ class Config extends AbstractHelper {
     public function fallbackName(Store $store): string {
         return $this->getConfig('fallback_name', $store->getId());
     }
+
+    /**
+     * @param Store $store
+     * @return array
+     */
+    public function getProductCustomAttributes(Store $store): array {
+        $attributes = $this->getConfig('product_custom_attributes', $store->getId());
+        if (empty($attributes)) {
+            return [];
+        }
+        $attributes = explode(',', $attributes);
+        $attributes = array_map('trim', $attributes);
+        return $attributes;
+    }
 }

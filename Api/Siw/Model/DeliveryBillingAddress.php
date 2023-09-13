@@ -58,6 +58,7 @@ class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     protected static $swaggerTypes = [
         'address_lines' => 'string[]',
         'city' => 'string',
+        'region' => 'string',
         'postal_code' => 'string',
         'country' => 'string',
         'street' => 'string',
@@ -76,6 +77,7 @@ class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     protected static $swaggerFormats = [
         'address_lines' => null,
         'city' => null,
+        'region' => null,
         'postal_code' => null,
         'country' => null,
         'street' => null,
@@ -113,6 +115,7 @@ class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     protected static $attributeMap = [
         'address_lines' => 'address_lines',
         'city' => 'city',
+        'region' => 'region',
         'postal_code' => 'postal_code',
         'country' => 'country',
         'street' => 'street',
@@ -131,6 +134,7 @@ class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     protected static $setters = [
         'address_lines' => 'setAddressLines',
         'city' => 'setCity',
+        'region' => 'setRegion',
         'postal_code' => 'setPostalCode',
         'country' => 'setCountry',
         'street' => 'setStreet',
@@ -149,6 +153,7 @@ class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     protected static $getters = [
         'address_lines' => 'getAddressLines',
         'city' => 'getCity',
+        'region' => 'getRegion',
         'postal_code' => 'getPostalCode',
         'country' => 'getCountry',
         'street' => 'getStreet',
@@ -212,6 +217,7 @@ class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
     public function __construct(array $data = null) {
         $this->container['address_lines'] = isset($data['address_lines']) ? $data['address_lines'] : null;
         $this->container['city'] = isset($data['city']) ? $data['city'] : null;
+        $this->container['region'] = isset($data['region']) ? $data['region'] : null;
         $this->container['postal_code'] = isset($data['postal_code']) ? $data['postal_code'] : null;
         $this->container['country'] = isset($data['country']) ? $data['country'] : null;
         $this->container['street'] = isset($data['street']) ? $data['street'] : null;
@@ -283,6 +289,28 @@ class DeliveryBillingAddress implements ModelInterface, ArrayAccess {
      */
     public function setCity($city) {
         $this->container['city'] = $city;
+
+        return $this;
+    }
+
+    /**
+     * Gets region
+     *
+     * @return string
+     */
+    public function getRegion() {
+        return $this->container['region'];
+    }
+
+    /**
+     * Sets region
+     *
+     * @param string $region region
+     *
+     * @return $this
+     */
+    public function setRegion($region) {
+        $this->container['region'] = $region;
 
         return $this;
     }

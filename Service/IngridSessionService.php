@@ -38,6 +38,8 @@ use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
 use Psr\Log\LoggerInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Catalog\Model\ProductRepository;
+use Magento\Directory\Model\RegionFactory;
 
 class IngridSessionService {
     const SESSION_ID_KEY = 'ingrid_session_id';
@@ -78,6 +80,21 @@ class IngridSessionService {
     private $addressRepository;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
+     * @var RegionFactory
+     */
+    private $regionFactory;
+
+    /**
      * IngridSessionProvider constructor.
      */
     public function __construct(
@@ -88,7 +105,9 @@ class IngridSessionService {
         LoggerInterface $logger,
         SiwClientInterface $siwClient,
         Config $config,
-        AddressRepositoryInterface $addressRepository
+        AddressRepositoryInterface $addressRepository,
+        ProductRepository $productRepository,
+        RegionFactory $regionFactory
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->log = $logger;
@@ -100,6 +119,8 @@ class IngridSessionService {
         $this->slugify = new Slugify(['separator' => '_']);
         $this->ingridSessionRepository = $ingridSessionRepository;
         $this->addressRepository = $addressRepository;
+        $this->productRepository = $productRepository;
+        $this->regionFactory = $regionFactory;
     }
 
     /**
@@ -219,7 +240,9 @@ class IngridSessionService {
         }
         $diff = (bool)count(array_diff($mcart, $ingridcart));
         $diff2 = (bool)count(array_diff($ingridcart, $mcart));
-        if ($diff || $diff2) {
+
+        $quoteStoreCode = $quote->getStore()->getCode();
+        if ($diff || $diff2 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
             $updateReq = new UpdateSessionRequest();
             $updateReq->setId($ingridSessionId);
             $updateReq->setCart($this->makeCart($quote));
@@ -374,6 +397,16 @@ class IngridSessionService {
                 $vouchers = [mb_strtolower($couponCode)];
             }
         }
+        //set store code in cart attributes[]
+        $store = $quote->getStore();
+        $storeCode = $store->getCode();
+        $label = $this->slugify->slugify('store');
+        $value = $this->slugify->slugify($storeCode);
+        $keyset = $label.':'.$value;
+        $attrs[] = $keyset;
+        $attributes = [];
+        $attributes[] = $keyset;
+        $cart->setAttributes($attributes);
 
         if ($quote->getExtensionAttributes() != null) {
             $shippingAssignments = $quote->getExtensionAttributes()->getShippingAssignments();
@@ -437,6 +470,32 @@ class IngridSessionService {
                 $keyset = $label.':'.$value;
                 $attrs[] = $keyset;
                 $this->log->debug('item order options: '.$keyset, $logCtx);
+            }
+        }
+        //custom attributes
+        $_product = $this->productRepository->get($product->getSku());
+        $attributes = $_product->getAttributes();
+        foreach ($attributes as $attribute) {
+            $attributesToSend = $this->config->getProductCustomAttributes($store);
+            if (!in_array($attribute->getAttributeCode(), $attributesToSend) || !$attribute->getFrontend()->getValue($_product)) {
+                continue;
+            }
+            if ($attribute->getFrontendInput() == 'multiselect') {
+                $values = $attribute->getFrontend()->getValue($_product);
+                $values = explode(',', $values);
+                foreach ($values as $value) {
+                    $label = $this->slugify->slugify($attribute->getFrontendLabel());
+                    $value = $this->slugify->slugify($value);
+                    $keyset = $label.':'.$value;
+                    $attrs[] = $keyset;
+                    $this->log->debug('item custom attributes: '.$keyset, $logCtx);
+                }
+            } else {
+                $label = $this->slugify->slugify($attribute->getFrontendLabel());
+                $value = $this->slugify->slugify($attribute->getFrontend()->getValue($_product));
+                $keyset = $label.':'.$value;
+                $attrs[] = $keyset;
+                $this->log->debug('item custom attributes: '.$keyset, $logCtx);
             }
         }
         if (array_key_exists('is_downloadable', $opts) && $opts['is_downloadable']) {
@@ -794,6 +853,12 @@ class IngridSessionService {
 
     private function mapAddress($quote, $address, $type): void
     {
+        $region = $this->regionFactory->create();
+        if($address->getCountry() == "US"){
+            $region->loadByCode($address->getRegion(), $address->getCountry());
+        } else {
+            $region->loadByName($address->getRegion(), $address->getCountry());
+        }
         if($quote->getCustomerIsGuest()){
             if($type == "shipping") {
                 $quote->getShippingAddress()
@@ -803,7 +868,10 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet($address->getStreet()." ".$address->getStreetNumber())
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
             } else {
                 $quote->getBillingAddress()
                     ->setCountryId($address->getCountry())
@@ -812,7 +880,10 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet($address->getStreet()." ".$address->getStreetNumber())
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
             }
         } else {
             if($type == "shipping") {
@@ -825,7 +896,12 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionId($region->getId());
+                $shippingAddress->getRegion()
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
                 $this->addressRepository->save($shippingAddress);
             } else {
                 $billingAddressId = $quote->getCustomer()->getDefaultBilling();
@@ -837,7 +913,12 @@ class IngridSessionService {
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
                     ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($address->getPhone());
+                    ->setTelephone($address->getPhone())
+                    ->setRegionId($region->getId());
+                $billingAddress->getRegion()
+                    ->setRegionCode($region->getCode())
+                    ->setRegion($region->getName())
+                    ->setRegionId($region->getId());
                 $this->addressRepository->save($billingAddress);
             }
         }

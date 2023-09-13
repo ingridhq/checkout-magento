@@ -440,6 +440,7 @@ class DefaultApi {
                 $body->getPurchaseCurrency() ? $arrayBody["purchase_currency"] = $body->getPurchaseCurrency():'';
                 $body->getLocales() ? $arrayBody["locales"] = $body->getLocales():'';
                 //cart
+                $body->getCart()->getAttributes() ? $arrayBody["cart"]["attributes"] = $body->getCart()->getAttributes():'';
                 $body->getCart()->getTotalValue() ? $arrayBody["cart"]["total_value"] = $body->getCart()->getTotalValue():'';
                 $body->getCart()->getTotalDiscount() ? $arrayBody["cart"]["total_discount"] = $body->getCart()->getTotalDiscount():'';
                 $body->getCart()->getCurrency() ? $arrayBody["cart"]["currency"] = $body->getCart()->getCurrency():'';
@@ -1237,6 +1238,7 @@ class DefaultApi {
                 $body->getPurchaseCurrency() ? $arrayBody["purchase_currency"] = $body->getPurchaseCurrency():'';
                 $body->getLocales() ? $arrayBody["locales"] = $body->getLocales():'';
                 if ($body->getCart()) {
+                    $body->getCart()->getAttributes() ? $arrayBody["cart"]["attributes"] = $body->getCart()->getAttributes():'';
                     $body->getCart()->getTotalValue() ? $arrayBody["cart"]["total_value"] = $body->getCart()->getTotalValue():'';
                     $body->getCart()->getTotalDiscount() ? $arrayBody["cart"]["total_discount"] = $body->getCart()->getTotalDiscount():'';
                     $body->getCart()->getCurrency() ? $arrayBody["cart"]["currency"] = $body->getCart()->getCurrency():'';

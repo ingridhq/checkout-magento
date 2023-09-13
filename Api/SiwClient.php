@@ -62,10 +62,12 @@ class SiwClient implements SiwClientInterface {
 
         $ua = self::buildUA($config, $moduleList, $mage);
         $conf = new Configuration();
-        $conf->setApiKey('Authorization', $config->encodedApiKey());
-        $conf->setHost($config->siwBaseUrl());
-        $conf->setApiKeyPrefix('Authorization', 'Bearer');
-        $conf->setUserAgent($ua);
+        if ($config->getConfig('active')) {
+            $conf->setApiKey('Authorization', $config->encodedApiKey());
+            $conf->setHost($config->siwBaseUrl());
+            $conf->setApiKeyPrefix('Authorization', 'Bearer');
+            $conf->setUserAgent($ua);
+        }
         $this->curlFactory = $curlFactory;
         $this->json = $json;
 

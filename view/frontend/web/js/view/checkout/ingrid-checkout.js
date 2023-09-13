@@ -46,9 +46,9 @@ define([
             var self = this;
             this._super();
 
-            quote.shippingAddress.subscribe(this.shippingAddressObserver.bind(this));
-            quote.billingAddress.subscribe(this.billingAddressObserver.bind(this));
-            quote.totals.subscribe(this.quoteTotalObserver.bind(this));
+            //quote.shippingAddress.subscribe(this.shippingAddressObserver.bind(this));
+            //quote.billingAddress.subscribe(this.billingAddressObserver.bind(this));
+            //quote.totals.subscribe(this.quoteTotalObserver.bind(this));
 
             domReady(function () {
                 var checkExist = window.setInterval(function () {
@@ -85,7 +85,7 @@ define([
         shippingAddressObserver: function (address) {
             //console.log('shippingAddressObserver', quote.shippingAddress());
             var addr = quote.shippingAddress();
-            if (addr.postcode && addr.email) {
+            if (addr.postcode && addr.email && $('.checkout-klarna-index').length > 0) {
             checkout.updateData({
                     email: addr.email,
                     address: quote.shippingAddress(),
