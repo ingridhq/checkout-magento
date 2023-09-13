@@ -153,6 +153,10 @@ define([
                 })
                 api.on('summary_changed', function(summary) {
                     if (summary.delivery_address) {
+                        if($('#klarna_kco')) {
+                            $('.opc-wrapper').css("background", "#fff");
+                            $('#klarna_kco').css("visibility", "visible");
+                        }
                         if (isEqual(summary.delivery_address, lastUpdateDeliveryAddress)) {
                              //console.log('no new data, skipping update');
                             return;
