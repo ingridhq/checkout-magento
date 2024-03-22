@@ -141,6 +141,57 @@ define([
                         $('.opc-wrapper').css("background", "#fff");
                         $('#klarna_kco').css("visibility", "visible");
                     }
+                    if(b.search_address_changed){
+
+                        var ingridAddress = quote.shippingAddress();
+                        ingridAddress.countryId = m.search_address.country;
+                        if(m.search_address.address_lines) {
+                            ingridAddress.street = m.search_address.address_lines;
+                        }
+                        if(m.search_address.region) {
+                            var countryData = customerData.get('directory-data');
+                            var regions = Object.entries(countryData()[m.search_address.country].regions);
+
+                            regions.filter(function ([key, region]) {
+                                if(region.code == m.search_address.region || region.name == m.search_address.region) {
+                                    ingridAddress.regionId = key;
+                                }
+                            });
+                        }
+                        ingridAddress.postcode = m.search_address.postal_code;
+                        quote.shippingAddress(ingridAddress);
+                        //stanard magento checkout
+                        if($('#shipping-new-address-form').length > 0) {
+                            if(quote.guestEmail == null) {
+                                quote.guestEmail = summary.delivery_address.email;
+                                registry.set('index = customer-email',summary.delivery_address.email);
+                            }
+                        
+                            registry.async('checkoutProvider')(function (checkoutProvider) {
+                                var shippingAddressData = checkoutData.getShippingAddressFromData();
+                                registry.get('dataScope = shippingAddress.country_id').value(m.search_address.country);
+                                registry.get('dataScope = shippingAddress.postcode').value(m.search_address.postal_code);
+                                var countryData = customerData.get('directory-data');
+                                var regions = Object.entries(countryData()[m.search_address.country].regions);
+
+                                regions.filter(function ([key, region]) {
+                                    if(region.code == m.search_address.region || region.name == m.search_address.region) {
+                                        registry.get('dataScope = shippingAddress.region_id').value(key);
+                                    }
+                                });
+                                var shippingAddressData = checkoutData.getShippingAddressFromData();
+                
+                                if (shippingAddressData) {
+                                    checkoutProvider.set(
+                                        'shippingAddress',
+                                        $.extend(true, {}, checkoutProvider.get('shippingAddress'), shippingAddressData)
+                                    );
+                                }
+                            });
+                        }
+                        self.updateKlarna();
+
+                    }
                     if (!b.initial_load && b.shipping_method_changed || b.pickup_location_changed || b.delivery_address_changed || b.payment_method_changed || b.price_changed) {
                         if (quote.shippingMethod() != undefined) {
                             setShippingInformationAction().done(
@@ -219,6 +270,8 @@ define([
         updateKlarna: function() {
             if(window.checkoutConfig.klarna && $('.checkout-klarna-index').length > 0) {
                 var updateKlarnaOrder = require('Klarna_Kco/js/action/update-klarna-order');
+                var iframe = require('Klarna_Kco/js/model/iframe');
+                iframe.suspend();
                 setShippingInformationAction().done(
                     function () {
                         updateKlarnaOrder();
