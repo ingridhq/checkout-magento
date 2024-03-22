@@ -59,6 +59,7 @@ class Addresses implements ModelInterface, ArrayAccess {
         'delivery_address' => '\Ingrid\Checkout\Api\Siw\Model\DeliveryBillingAddress',
         'billing_address' => '\Ingrid\Checkout\Api\Siw\Model\DeliveryBillingAddress',
         'location' => '\Ingrid\Checkout\Api\Siw\Model\PickupLocation',
+        'search_address' => '\Ingrid\Checkout\Api\Siw\Model\Address',
         ];
 
     /**
@@ -70,7 +71,7 @@ class Addresses implements ModelInterface, ArrayAccess {
         'delivery_address' => null,
         'billing_address' => null,
         'location' => null,
-        
+        'search_address' => null,
     ];
 
     /**
@@ -101,6 +102,7 @@ class Addresses implements ModelInterface, ArrayAccess {
         'delivery_address' => 'delivery_address',
         'billing_address' => 'billing_address',
         'location' => 'location',
+        'search_address' => 'search_address',
     ];
 
     /**
@@ -112,6 +114,7 @@ class Addresses implements ModelInterface, ArrayAccess {
         'delivery_address' => 'setDeliveryAddress',
         'billing_address' => 'setBillingAddress',
         'location' => 'setLocation',
+        'search_address' => 'setSearchAddress',
     ];
 
     /**
@@ -123,6 +126,7 @@ class Addresses implements ModelInterface, ArrayAccess {
         'delivery_address' => 'getDeliveryAddress',
         'billing_address' => 'getBillingAddress',
         'location' => 'getLocation',
+        'search_address' => 'getSearchAddress',
     ];
 
     /**
@@ -179,6 +183,7 @@ class Addresses implements ModelInterface, ArrayAccess {
         $this->container['delivery_address'] = isset($data['delivery_address']) ? $data['delivery_address'] : null;
         $this->container['billing_address'] = isset($data['billing_address']) ? $data['billing_address'] : null;
         $this->container['location'] = isset($data['location']) ? $data['location'] : null;
+        $this->container['search_address'] = isset($data['search_address']) ? $data['search_address'] : null;
     }
 
     /**
@@ -264,6 +269,28 @@ class Addresses implements ModelInterface, ArrayAccess {
      */
     public function setLocation($location) {
         $this->container['location'] = $location;
+
+        return $this;
+    }
+
+    /**
+     * Gets search_address
+     *
+     * @return \Ingrid\Checkout\Api\Siw\Model\Address
+     */
+    public function getSearchAddress() {
+        return $this->container['search_address'];
+    }
+
+    /**
+     * Sets search_address
+     *
+     * @param \Ingrid\Checkout\Api\Siw\Model\Address $search_address search_address
+     *
+     * @return $this
+     */
+    public function setSearchAddress($search_address) {
+        $this->container['search_address'] = $search_address;
 
         return $this;
     }

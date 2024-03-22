@@ -113,6 +113,9 @@
     <type name="Klarna\Kco\Model\Checkout\Validation">
         <plugin name="nwt_ingrid_klarna_kco_model_checkout_validation" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\Checkout\Validation"/>
     </type>
+    <type name="Klarna\Kco\Model\Api\Kasper">
+        <plugin name="nwt_ingrid_klarna_kco_model_api_kasper" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\Api\Kasper"/>
+    </type>
     <type name="Ingrid\Checkout\Controller\Update\Briqpay">
         <arguments>
             <argument name="data" xsi:type="array">
