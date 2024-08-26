@@ -2,7 +2,7 @@
     "name": "ingrid/checkout-magento",
     "description": "Ingrid Delivery Checkout Magento 2 Extension",
     "type": "magento2-module",
-    "version": "2.0.10",
+    "version": "2.0.11",
     "license": "Apache-2.0",
     "support": {
         "email": "support@ingrid.com"
@@ -21,7 +21,7 @@
         }
     },
     "require": {
-        "php": "~7.2.0||~7.3.0||~7.4.0||~8.1.0",
+        "php": "~7.2.0||~7.3.0||~7.4.0||~8.1.0||~8.2.0||~8.3.0",
         "ext-json": "*",
         "ext-mbstring": "*",
         "guzzlehttp/guzzle": "^7.5",

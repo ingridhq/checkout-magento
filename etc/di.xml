@@ -116,6 +116,9 @@
     <type name="Klarna\Kco\Model\Api\Kasper">
         <plugin name="nwt_ingrid_klarna_kco_model_api_kasper" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\Api\Kasper"/>
     </type>
+    <type name="Klarna\Kco\Model\WorkflowProvider">
+        <plugin name="nwt_ingrid_klarna_kco_model_workflowprovider" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\WorkflowProvider"/>
+    </type>
     <type name="Ingrid\Checkout\Controller\Update\Briqpay">
         <arguments>
             <argument name="data" xsi:type="array">
