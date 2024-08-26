@@ -42,6 +42,10 @@ class SiwClient implements SiwClientInterface {
      */
     private $isDevMode;
 
+    private $curlFactory;
+
+    private $json;
+
     /**
      * SiwClient constructor.
      * @param LoggerInterface $logger
