@@ -312,6 +312,9 @@ class IngridSessionService {
         }
         $req = new CreateSessionRequest();
         $purchaseCountry = $this->config->getPurchaseCountry($quote->getStore());
+        if($quote->getShippingAddress()->getCountryId() == null){
+            $quote->getShippingAddress()->setCountryId($purchaseCountry);
+        }
         $currency = $quote->getQuoteCurrencyCode();
 
         $req->setPurchaseCurrency($currency);
