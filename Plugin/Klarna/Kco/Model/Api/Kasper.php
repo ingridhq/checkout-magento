@@ -50,7 +50,7 @@ class Kasper
             $data['shipping_address']['region'] = $quote->getShippingAddress()->getRegionCode();
             $data['billing_address']['region'] = $quote->getShippingAddress()->getRegionCode();
         }
-        $response = $checkoutApi->updateOrder($subject->getKcoSession()->getKlarnaQuote()->getKlarnaCheckoutId(), $data);
+        $response = $checkoutApi->updateOrder($subject->getKcoSession()->getKlarnaQuote()->getKlarnaCheckoutId(), $data, $quote->getQuoteCurrencyCode());
 
         return [$orderId];
     }
