@@ -249,6 +249,15 @@ class IngridSessionService {
             $this->siwClient->updateSession($updateReq);
             $resp = $this->siwClient->getSession($ingridSessionId);
         }
+        //update quote address from search address v1
+        $searchAddress = $resp->getSession()->getDeliveryGroups()[0]->getAddresses()->getSearchAddress();
+        if($searchAddress != null){
+            if($searchAddress->getPostalCode() != null){
+                $this->mapAddress($quote, $searchAddress, 'shipping', true);
+                $this->mapAddress($quote, $searchAddress, 'billing', true);
+                $quote->save();
+            }
+        }
         //update quote address
         $addresses = $resp->getSession()->getDeliveryGroups()[0]->getAddresses();
         if($addresses->getDeliveryAddress() != null && $addresses->getBillingAddress() != null){
@@ -303,6 +312,9 @@ class IngridSessionService {
         }
         $req = new CreateSessionRequest();
         $purchaseCountry = $this->config->getPurchaseCountry($quote->getStore());
+        if($quote->getShippingAddress()->getCountryId() == null){
+            $quote->getShippingAddress()->setCountryId($purchaseCountry);
+        }
         $currency = $quote->getQuoteCurrencyCode();
 
         $req->setPurchaseCurrency($currency);
@@ -851,7 +863,7 @@ class IngridSessionService {
         $this->siwClient->updateSession($updateReq);
     }
 
-    private function mapAddress($quote, $address, $type): void
+    private function mapAddress($quote, $address, $type, $isSearchAddress = false): void
     {
         $region = $this->regionFactory->create();
         if($address->getCountry() == "US"){
@@ -867,8 +879,8 @@ class IngridSessionService {
                     ->setCity($address->getCity())
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
-                    ->setStreet($address->getStreet()." ".$address->getStreetNumber())
-                    ->setTelephone($address->getPhone())
+                    ->setStreet($isSearchAddress ? $address->getAddressLines(): $address->getStreet()." ".$address->getStreetNumber())
+                    ->setTelephone($isSearchAddress ? $quote->getShippingAddress()->getTelephone() : $address->getPhone())
                     ->setRegionCode($region->getCode())
                     ->setRegion($region->getName())
                     ->setRegionId($region->getId());
@@ -879,8 +891,8 @@ class IngridSessionService {
                     ->setCity($address->getCity())
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
-                    ->setStreet($address->getStreet()." ".$address->getStreetNumber())
-                    ->setTelephone($address->getPhone())
+                    ->setStreet($isSearchAddress ? $address->getAddressLines() : $address->getStreet()." ".$address->getStreetNumber())
+                    ->setTelephone($isSearchAddress ? $quote->getBillingAddress()->getTelephone() : $address->getPhone())
                     ->setRegionCode($region->getCode())
                     ->setRegion($region->getName())
                     ->setRegionId($region->getId());
@@ -895,8 +907,8 @@ class IngridSessionService {
                     ->setCity($address->getCity())
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
-                    ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($address->getPhone())
+                    ->setStreet($isSearchAddress ? $address->getAddressLines() : [$address->getStreet()." ".$address->getStreetNumber()])
+                    ->setTelephone($isSearchAddress ? $shippingAddress->getTelephone() : $address->getPhone())
                     ->setRegionId($region->getId());
                 $shippingAddress->getRegion()
                     ->setRegionCode($region->getCode())
@@ -912,8 +924,8 @@ class IngridSessionService {
                     ->setCity($address->getCity())
                     ->setFirstname($address->getFirstname())
                     ->setLastname($address->getLastname())
-                    ->setStreet([$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($address->getPhone())
+                    ->setStreet($isSearchAddress ? $address->getAddressLines() : [$address->getStreet()." ".$address->getStreetNumber()])
+                    ->setTelephone($isSearchAddress ? $billingAddress->getTelephone() : $address->getPhone())
                     ->setRegionId($region->getId());
                 $billingAddress->getRegion()
                     ->setRegionCode($region->getCode())
