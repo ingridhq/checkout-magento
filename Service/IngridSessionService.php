@@ -234,7 +234,7 @@ class IngridSessionService {
             $ingridcart[] = $ingridItem->getQuantity();
         }
         $mcart = [];
-        foreach ($quote->getItems() as $item) {
+        foreach ($quote->getAllItems() as $item) {
             $mcart[] = $item->getSku();
             $mcart[] = $item->getQty();
         }
