@@ -116,6 +116,9 @@
     <type name="Klarna\Base\Model\Quote\ShippingMethod\SelectionAssurance">
         <plugin name="nwt_ingrid_klarna_base_model_quote_shippingmethod_selectionassurance" type="Ingrid\Checkout\Plugin\Klarna\Base\Model\Quote\ShippingMethod\SelectionAssurance"/>
     </type>
+    <type name="Klarna\Orderlines\Model\Calculator\Shipping">
+        <plugin name="nwt_ingrid_klarna_orderlines_model_calculator_shipping" type="Ingrid\Checkout\Plugin\Klarna\Orderlines\Model\Calculator\Shipping"/>
+    </type>
     <type name="Klarna\Kco\Model\WorkflowProvider">
         <plugin name="nwt_ingrid_klarna_kco_model_workflowprovider" type="Ingrid\Checkout\Plugin\Klarna\Kco\Model\WorkflowProvider"/>
     </type>

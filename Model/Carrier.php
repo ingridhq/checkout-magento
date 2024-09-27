@@ -6,7 +6,7 @@ namespace Ingrid\Checkout\Model;
 use Ingrid\Checkout\Helper\Config;
 use Ingrid\Checkout\Model\Exception\NoQuoteException;
 use Ingrid\Checkout\Service\IngridSessionService;
-use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
@@ -17,6 +17,8 @@ use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 use Psr\Log\LoggerInterface;
+use Magento\Tax\Model\Calculation;
+use Magento\Tax\Helper\Data;
 
 class Carrier extends AbstractCarrier implements CarrierInterface {
 
@@ -53,9 +55,19 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
      */
     private $config;
     /**
-     * @var CheckoutSession
+     * @var CartRepositoryInterface
      */
-    private $checkoutSession;
+    private $quoteRepository;
+
+    /**
+     * @var \Magento\Tax\Model\Calculation
+     */
+    private $taxCalculation;
+
+    /**
+     * @var \Magento\Tax\Helper\Data
+     */
+    private $taxHelper;
 
     /**
      * Carrier constructor.
@@ -65,6 +77,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
      * @param ResultFactory $rateResultFactory
      * @param MethodFactory $rateMethodFactory
      * @param IngridSessionService $sessionService
+     * @param Config $config
+     * @param CartRepositoryInterface $quoteRepository
+     * @param Calculation $taxCalculation
+     * @param Data $taxHelper
      * @param array $data
      */
     public function __construct(
@@ -75,7 +91,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
         MethodFactory $rateMethodFactory,
         IngridSessionService $sessionService,
         Config $config,
-        CheckoutSession $checkoutSession,
+        CartRepositoryInterface $quoteRepository,
+        Calculation $taxCalculation,
+        Data $taxHelper,
         array $data = []
     ) {
         $this->rateResultFactory = $rateResultFactory;
@@ -84,7 +102,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
 
         $this->sessionProvider = $sessionService;
         $this->config = $config;
-        $this->checkoutSession = $checkoutSession;
+        $this->quoteRepository = $quoteRepository;
+        $this->taxCalculation = $taxCalculation;
+        $this->taxHelper = $taxHelper;
     }
 
     /**
@@ -157,9 +177,43 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
 
             $method->setMethod("ingrid");
 
-            $price = $shippingResult->getPricing()->getPrice() / 100;
-            $method->setPrice($price);
-            $method->setCost($price);
+            $price = floatval($shippingResult->getPricing()->getPrice() / 100);
+            
+            $quoteId = $request->getAllItems()[0]->getQuoteId();
+            $quote = $this->quoteRepository->get($quoteId);
+            $storeId = $quote->getStoreId();
+
+            // Fetch the shipping tax class ID from configuration
+            $shippingTaxClassId = $this->taxHelper->getShippingTaxClass($storeId);
+
+            // Calculate the tax rate based on the shipping address
+            $taxRateRequest = $this->taxCalculation->getRateRequest(
+                $quote->getShippingAddress(),
+                $quote->getBillingAddress(),
+                $quote->getCustomerTaxClassId(),
+                $storeId
+            );
+
+            $taxRateRequest->setProductClassId($shippingTaxClassId);
+            $taxRate = $this->taxCalculation->getRate($taxRateRequest);
+
+            // Calculate the shipping tax amount
+            $shippingTaxAmount = $this->taxCalculation->calcTaxAmount($price, $taxRate, false, true);
+
+            // Determine if the price should include tax
+            $priceIncludesTax = $this->taxHelper->shippingPriceIncludesTax($storeId);
+
+            if ($priceIncludesTax) {
+                $priceWithTax = $price;
+                $priceWithoutTax = $price - $shippingTaxAmount;
+            } else {
+                $priceWithoutTax = $price;
+                $priceWithTax = $price + $shippingTaxAmount;
+            }
+
+            // Use the tax-inclusive or tax-exclusive price as required
+            $method->setPrice($priceWithTax);
+            $method->setCost($priceWithoutTax);
 
             $this->_logger->info('collected method '.$method->toString());
 
