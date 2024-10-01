@@ -390,7 +390,6 @@ class IngridSessionService {
     public function makeCart($quote, ?string $ingridSessionId=null): Cart {
         $currency = $quote->getQuoteCurrencyCode();
         $quote->collectTotals();
-        $quote->save();
         $cart = new Cart();
         $cart->setCartId($quote->getId());
         $cart->setTotalValue(intval($quote->getBaseGrandTotal()*100));
