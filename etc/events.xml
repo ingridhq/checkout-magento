@@ -3,4 +3,7 @@
     <event name="sales_order_save_after">
         <observer name="ingrid_checkout_session_complete" instance="Ingrid\Checkout\Observer\SessionComplete" disabled="false" />
     </event>
+    <event name="sales_quote_address_collect_totals_after">
+        <observer name="set_base_tax_amount_observer" instance="Ingrid\Checkout\Observer\SetBaseTaxAmountObserver" />
+    </event>
 </config>

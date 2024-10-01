@@ -19,6 +19,7 @@ use Magento\Shipping\Model\Rate\ResultFactory;
 use Psr\Log\LoggerInterface;
 use Magento\Tax\Model\Calculation;
 use Magento\Tax\Helper\Data;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 class Carrier extends AbstractCarrier implements CarrierInterface {
 
@@ -70,6 +71,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
     private $taxHelper;
 
     /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -94,6 +100,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
         CartRepositoryInterface $quoteRepository,
         Calculation $taxCalculation,
         Data $taxHelper,
+        CheckoutSession $checkoutSession,
         array $data = []
     ) {
         $this->rateResultFactory = $rateResultFactory;
@@ -105,6 +112,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
         $this->quoteRepository = $quoteRepository;
         $this->taxCalculation = $taxCalculation;
         $this->taxHelper = $taxHelper;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -176,12 +184,13 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
             }
 
             $method->setMethod("ingrid");
-
-            $price = floatval($shippingResult->getPricing()->getPrice() / 100);
             
+            $price = floatval($shippingResult->getPricing()->getPrice() / 100);
             $quoteId = $request->getAllItems()[0]->getQuoteId();
             $quote = $this->quoteRepository->get($quoteId);
             $storeId = $quote->getStoreId();
+            //set shipping method
+            $quote->getShippingAddress()->setShippingMethod('ingrid_ingrid');
 
             // Fetch the shipping tax class ID from configuration
             $shippingTaxClassId = $this->taxHelper->getShippingTaxClass($storeId);
@@ -205,19 +214,21 @@ class Carrier extends AbstractCarrier implements CarrierInterface {
 
             if ($priceIncludesTax) {
                 $priceWithTax = $price;
-                $priceWithoutTax = $price - $shippingTaxAmount;
+                //$priceWithoutTax = $price - $shippingTaxAmount;
             } else {
-                $priceWithoutTax = $price;
+                //$priceWithoutTax = $price;
                 $priceWithTax = $price + $shippingTaxAmount;
             }
 
             // Use the tax-inclusive or tax-exclusive price as required
             $method->setPrice($priceWithTax);
-            $method->setCost($priceWithoutTax);
+            //set base price
+            $method->setBasePrice($price);
+            $method->setCost($priceWithTax);
 
             $this->_logger->info('collected method '.$method->toString());
-
-            $result->append($method);
+            //set method in shipping assignment
+            return $result->append($method);
         } catch (\Exception $e) {
             $method->setCarrier($this->getCarrierCode());
             $method->setCarrierTitle($this->config->fallbackName($this->checkoutSession->getQuote()->getStore()));
