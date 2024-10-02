@@ -229,17 +229,18 @@ class IngridSessionService {
         $resp = $this->siwClient->getSession($ingridSessionId);
         $ingridCartItems = $resp->getSession()->getCart()->getItems();
         $ingridcart = [];
+        $ingridItemCount = 0;
         foreach ($ingridCartItems as $ingridItem) {
             $ingridcart[] = $ingridItem->getSku();
-            $ingridcart[] = $ingridItem->getQuantity();
+            $ingridItemCount += $ingridItem->getQuantity();
         }
         $mcart = [];
-        foreach ($quote->getAllItems() as $item) {
+        $mcartItemCount = $quote->getItemsQty();
+        foreach ($quote->getAllVisibleItems() as $item) {
             $mcart[] = $item->getSku();
-            $mcart[] = $item->getQty();
         }
-        $diff = (bool)count(array_diff($mcart, $ingridcart));
-        $diff2 = (bool)count(array_diff($ingridcart, $mcart));
+        $diff = count($mcart) != count($ingridcart);
+        $diff2 = $ingridItemCount != $mcartItemCount;
 
         $quoteStoreCode = $quote->getStore()->getCode();
         if ($diff || $diff2 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
@@ -440,7 +441,7 @@ class IngridSessionService {
         $logCtx = ['ingrid_session_id' => $ingridSessionId];
         $cartItems = [];
         /** @var Item[] $items */
-        $items = $quote->getAllItems();
+        $items = $quote->getAllVisibleItems();
         foreach ($items as $item) {
             $logCtx = $this->cartLogCx($quote, $item, $logCtx);
             $parentItem = $item->getParentItem() ?: ($item->getParentItemId() ? $quote->getItemById($item->getParentItemId()) : null);

@@ -27,6 +27,9 @@ class Kasper
         //use object manager to create the checkout api in case Klarna_Kco module is disabled/not installed
         $checkoutApi = $this->objectManager->create(\Klarna\Kco\Model\Api\Rest\Service\Checkout::class);
         $quote = $subject->getQuote();
+        //collect rates for the quote
+        $quote->getShippingAddress()->setCollectShippingRates(true);
+        $quote->collectTotals();
         $countryId = $quote->getShippingAddress()->getCountryId();
         $postCode = $quote->getShippingAddress()->getPostcode();
         $street = $quote->getShippingAddress()->getStreet();
