@@ -225,8 +225,14 @@ class IngridSessionService {
                 throw $e;
             }
         }
-        $this->log->info('updating current Ingrid session on checkout session');
-        $resp = $this->siwClient->getSession($ingridSessionId);
+        try {
+            $this->log->info('updating current Ingrid session on checkout session');
+            $resp = $this->siwClient->getSession($ingridSessionId);
+        } catch (\Exception $e) {
+            $this->log->info('failed to get session, creating new');
+            $this->checkoutSession->getQuote()->setIngridSessionId(null)->save();
+            return $this->mageCheckoutSession();
+        }
         $ingridCartItems = $resp->getSession()->getCart()->getItems();
         $ingridcart = [];
         $ingridItemCount = 0;
@@ -325,7 +331,9 @@ class IngridSessionService {
         $shippingAddr = $quote->getShippingAddress();
         if(!$quote->getCustomerIsGuest()){
             $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
-            $shippingAddr = $this->addressRepository->getById($shippingAddressId);
+            if($shippingAddressId != null){
+                $shippingAddr = $this->addressRepository->getById($shippingAddressId);
+            }
         }
         $addr = new Address();
         $addr->setCity($shippingAddr->getCity());
@@ -334,7 +342,9 @@ class IngridSessionService {
         if($quote->getCustomerIsGuest()){
             $addr->setRegion($shippingAddr->getRegionCode());
         }else{
-            $addr->setRegion($shippingAddr->getRegion()->getRegionCode());
+            if($shippingAddr->getRegion() != null){
+                $addr->setRegion($shippingAddr->getRegion()->getRegionCode());
+            }
         }
 
         $addrLines = self::cleanStreet($shippingAddr->getStreet());
