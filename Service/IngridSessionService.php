@@ -911,6 +911,9 @@ class IngridSessionService {
         } else {
             if($type == "shipping") {
                 $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
+                if($shippingAddressId == null){
+                    return;
+                }
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
                 $shippingAddress
                     ->setCountryId($address->getCountry())
@@ -928,6 +931,9 @@ class IngridSessionService {
                 $this->addressRepository->save($shippingAddress);
             } else {
                 $billingAddressId = $quote->getCustomer()->getDefaultBilling();
+                if($billingAddressId == null){
+                    return;
+                }
                 $billingAddress = $this->addressRepository->getById($billingAddressId);
                 $billingAddress
                     ->setCountryId($address->getCountry())
