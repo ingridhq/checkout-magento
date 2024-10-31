@@ -225,8 +225,14 @@ class IngridSessionService {
                 throw $e;
             }
         }
-        $this->log->info('updating current Ingrid session on checkout session');
-        $resp = $this->siwClient->getSession($ingridSessionId);
+        try {
+            $this->log->info('updating current Ingrid session on checkout session');
+            $resp = $this->siwClient->getSession($ingridSessionId);
+        } catch (\Exception $e) {
+            $this->log->info('failed to get session, creating new');
+            $this->checkoutSession->getQuote()->setIngridSessionId(null)->save();
+            return $this->mageCheckoutSession();
+        }
         $ingridCartItems = $resp->getSession()->getCart()->getItems();
         $ingridcart = [];
         $ingridItemCount = 0;
@@ -325,7 +331,9 @@ class IngridSessionService {
         $shippingAddr = $quote->getShippingAddress();
         if(!$quote->getCustomerIsGuest()){
             $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
-            $shippingAddr = $this->addressRepository->getById($shippingAddressId);
+            if($shippingAddressId != null){
+                $shippingAddr = $this->addressRepository->getById($shippingAddressId);
+            }
         }
         $addr = new Address();
         $addr->setCity($shippingAddr->getCity());
@@ -334,7 +342,9 @@ class IngridSessionService {
         if($quote->getCustomerIsGuest()){
             $addr->setRegion($shippingAddr->getRegionCode());
         }else{
-            $addr->setRegion($shippingAddr->getRegion()->getRegionCode());
+            if($shippingAddr->getRegion() != null){
+                $addr->setRegion($shippingAddr->getRegion()->getRegionCode());
+            }
         }
 
         $addrLines = self::cleanStreet($shippingAddr->getStreet());
@@ -875,63 +885,71 @@ class IngridSessionService {
         if($quote->getCustomerIsGuest()){
             if($type == "shipping") {
                 $quote->getShippingAddress()
-                    ->setCountryId($address->getCountry())
-                    ->setPostcode($address->getPostalcode())
-                    ->setCity($address->getCity())
-                    ->setFirstname($address->getFirstname())
-                    ->setLastname($address->getLastname())
-                    ->setStreet($isSearchAddress ? $address->getAddressLines(): $address->getStreet()." ".$address->getStreetNumber())
+                    ->setCountryId($address->getCountry() ?? $quote->getShippingAddress()->getCountryId())
+                    ->setPostcode($address->getPostalcode() ?? $quote->getShippingAddress()->getPostcode())
+                    ->setCity($address->getCity() ?? $quote->getShippingAddress()->getCity())
+                    ->setFirstname($address->getFirstname() ?? $quote->getShippingAddress()->getFirstname())
+                    ->setLastname($address->getLastname() ?? $quote->getShippingAddress()->getLastname())
+                    ->setStreet($isSearchAddress ? ($address->getAddressLines() ?? $quote->getShippingAddress()->getStreet()) : ($address->getStreet()? [$address->getStreet()." ".$address->getStreetNumber()] : $quote->getShippingAddress()->getStreet()))
                     ->setTelephone($isSearchAddress ? $quote->getShippingAddress()->getTelephone() : $address->getPhone())
-                    ->setRegionCode($region->getCode())
-                    ->setRegion($region->getName())
-                    ->setRegionId($region->getId());
+                    ->setRegionCode($region->getCode() ?? $quote->getShippingAddress()->getRegionCode())
+                    ->setRegion($region->getName() ?? $quote->getShippingAddress()->getRegion())
+                    ->setRegionId($region->getId() ?? $quote->getShippingAddress()->getRegionId());
             } else {
                 $quote->getBillingAddress()
-                    ->setCountryId($address->getCountry())
-                    ->setPostcode($address->getPostalcode())
-                    ->setCity($address->getCity())
-                    ->setFirstname($address->getFirstname())
-                    ->setLastname($address->getLastname())
-                    ->setStreet($isSearchAddress ? $address->getAddressLines() : $address->getStreet()." ".$address->getStreetNumber())
+                    ->setCountryId($address->getCountry() ?? $quote->getBillingAddress()->getCountryId())
+                    ->setPostcode($address->getPostalcode() ?? $quote->getBillingAddress()->getPostcode())
+                    ->setCity($address->getCity() ?? $quote->getBillingAddress()->getCity())
+                    ->setFirstname($address->getFirstname() ?? $quote->getBillingAddress()->getFirstname())
+                    ->setLastname($address->getLastname() ?? $quote->getBillingAddress()->getLastname())
+                    ->setStreet($isSearchAddress ? ($address->getAddressLines() ?? $quote->getBillingAddress()->getStreet()) : ($address->getStreet() ? [$address->getStreet()." ".$address->getStreetNumber()] : $quote->getBillingAddress()->getStreet()))
                     ->setTelephone($isSearchAddress ? $quote->getBillingAddress()->getTelephone() : $address->getPhone())
-                    ->setRegionCode($region->getCode())
-                    ->setRegion($region->getName())
-                    ->setRegionId($region->getId());
+                    ->setRegionCode($region->getCode() ?? $quote->getBillingAddress()->getRegionCode())
+                    ->setRegion($region->getName() ?? $quote->getBillingAddress()->getRegion())
+                    ->setRegionId($region->getId() ?? $quote->getBillingAddress()->getRegionId());
             }
         } else {
             if($type == "shipping") {
                 $shippingAddressId = $quote->getCustomer()->getDefaultShipping();
+                if($shippingAddressId == null){
+                    return;
+                }
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
                 $shippingAddress
-                    ->setCountryId($address->getCountry())
-                    ->setPostcode($address->getPostalcode())
-                    ->setCity($address->getCity())
-                    ->setFirstname($address->getFirstname())
-                    ->setLastname($address->getLastname())
-                    ->setStreet($isSearchAddress ? $address->getAddressLines() : [$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($isSearchAddress ? $shippingAddress->getTelephone() : $address->getPhone())
-                    ->setRegionId($region->getId());
-                $shippingAddress->getRegion()
-                    ->setRegionCode($region->getCode())
-                    ->setRegion($region->getName())
-                    ->setRegionId($region->getId());
+                    ->setCountryId($address->getCountry() ?? $shippingAddress->getCountryId())
+                    ->setPostcode($address->getPostalcode() ?? $shippingAddress->getPostcode())
+                    ->setCity($address->getCity() ?? $shippingAddress->getCity())
+                    ->setFirstname($address->getFirstname() ?? $shippingAddress->getFirstname())
+                    ->setLastname($address->getLastname() ?? $shippingAddress->getLastname())
+                    ->setStreet($isSearchAddress ? ($address->getAddressLines()?? $quote->getShippingAddress()->getStreet()) : ($address->getStreet() ? [$address->getStreet()." ".$address->getStreetNumber()] : $shippingAddress->getStreet()))
+                    ->setTelephone($isSearchAddress ? $shippingAddress->getTelephone() : $address->getPhone());
+                    if($region->getId() != null){
+                        $shippingAddress->getRegion()
+                            ->setRegionCode($region->getCode())
+                            ->setRegion($region->getName())
+                            ->setRegionId($region->getId());
+                    }
                 $this->addressRepository->save($shippingAddress);
             } else {
                 $billingAddressId = $quote->getCustomer()->getDefaultBilling();
+                if($billingAddressId == null){
+                    return;
+                }
                 $billingAddress = $this->addressRepository->getById($billingAddressId);
                 $billingAddress
-                    ->setCountryId($address->getCountry())
-                    ->setPostcode($address->getPostalcode())
-                    ->setCity($address->getCity())
-                    ->setFirstname($address->getFirstname())
-                    ->setLastname($address->getLastname())
-                    ->setStreet($isSearchAddress ? $address->getAddressLines() : [$address->getStreet()." ".$address->getStreetNumber()])
-                    ->setTelephone($isSearchAddress ? $billingAddress->getTelephone() : $address->getPhone())
-                    ->setRegionId($region->getId());
-                $billingAddress->getRegion()
-                    ->setRegionCode($region->getCode())
-                    ->setRegion($region->getName())
-                    ->setRegionId($region->getId());
+                    ->setCountryId($address->getCountry() ?? $billingAddress->getCountryId())
+                    ->setPostcode($address->getPostalcode() ?? $billingAddress->getPostcode())
+                    ->setCity($address->getCity() ?? $billingAddress->getCity())
+                    ->setFirstname($address->getFirstname() ?? $billingAddress->getFirstname())
+                    ->setLastname($address->getLastname() ?? $billingAddress->getLastname())
+                    ->setStreet($isSearchAddress ? ($address->getAddressLines() ?? $billingAddress->getStreet()) : ($address->getStreet() ? [$address->getStreet()." ".$address->getStreetNumber()] : $billingAddress->getStreet()))
+                    ->setTelephone($isSearchAddress ? $billingAddress->getTelephone() : $address->getPhone());
+                if($region->getId() != null){
+                    $billingAddress->getRegion()
+                        ->setRegionCode($region->getCode())
+                        ->setRegion($region->getName())
+                        ->setRegionId($region->getId());
+                }
                 $this->addressRepository->save($billingAddress);
             }
         }
