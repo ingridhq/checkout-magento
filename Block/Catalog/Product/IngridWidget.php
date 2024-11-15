@@ -14,6 +14,8 @@ use Psr\Log\LoggerInterface;
  */
 class IngridWidget extends \Magento\Framework\View\Element\Template
 {
+    const SUPPORTED_LOCALES = ["da-DK", "de-AT", "de-BE", "de-CH", "de-DE", "de-LU", "el-GR", "en-AU", "en-CA", "en-GB", "en-IE", "en-US", "es-ES", "et-EE", "fi-FI", "fi-SE", "fr-BE", "fr-CA", "fr-CH", "fr-FR", "fr-LU", "hr-HR", "hu-HU", "is-IS", "it-CH", "it-IT", "ja-JP", "ko-KR", "lt-LT", "lv-LV", "ms-MY", "nb-NO", "nl-BE", "nl-NL", "nn-NO", "no-NO", "pl-PL", "pt-PT", "ru-RU", "sk-SK", "sl-SI", "sv-FI", "sv-SE", "th-TH", "tr-TR", "vi-VN", "zh-CN"];
+    const SUPPORTED_COUNTRIES = ["CZ", "DK", "AT", "BE", "CH", "DE", "LU", "GR", "AU", "CA", "GB", "IE", "US", "ES", "EE", "FI", "SE", "BE", "CA", "CH", "FR", "LU", "HR", "HU", "IS", "CH", "IT", "JP", "KR", "LT", "LV", "MY", "NO", "BE", "NL", "NO", "NO", "PL", "PT", "RU", "SK", "SI", "FI", "SE", "TH", "TR", "VN", "CN"];
     /**
      * @var ScopeConfigInterface
      */
@@ -122,6 +124,31 @@ class IngridWidget extends \Magento\Framework\View\Element\Template
         $viewedItem['sku'] = $currentProduct->getSku();
 
         return json_encode($viewedItem);
+    }
+
+    public function getCurrencyCode()
+    {
+        return $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+    }
+
+    public function getCountryCode()
+    {
+        $countryCode = $this->storeManager->getStore()->getConfig('general/country/default');
+        if (in_array($countryCode, self::SUPPORTED_COUNTRIES)) {
+            return $countryCode;
+        } else {
+            return 'US';
+        }
+    }
+
+    public function getLocale()
+    {
+        $locale = str_replace("_", "-", $this->storeManager->getStore()->getConfig('general/locale/code'));
+        if (in_array($locale, self::SUPPORTED_LOCALES)) {
+            return $locale;
+        } else {
+            return 'en-US';
+        }
     }
 
 }

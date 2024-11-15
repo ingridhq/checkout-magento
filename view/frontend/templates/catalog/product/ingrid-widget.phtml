@@ -17,9 +17,9 @@
              "Ingrid_Checkout/js/view/product/ingrid-product-widget":{
                 "id": "ingrid-product-widget",
                 "auth_token": "ingrid-http-auth-token:<?= $block->getProductWidgetKey(); ?>",
-                "country": "SE",
-                "locales": "en-US",
-                "currency": "SEK",
+                "country": "<?= $block->getCountryCode() ?>",
+                "locales": "<?= $block->getLocale() ?>",
+                "currency": "<?= $block->getCurrencyCode() ?>",
                 "viewed_item": <?= $block->getViewedItem() ?>
                 
             }
