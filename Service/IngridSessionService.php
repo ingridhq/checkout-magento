@@ -247,9 +247,19 @@ class IngridSessionService {
         }
         $diff = count($mcart) != count($ingridcart);
         $diff2 = $ingridItemCount != $mcartItemCount;
+        //check if cart total value should include discount
+        $cartValueIncludeDiscount = $this->config->getConfig('cart_total_value_include_discount', $quote->getStore());
+        $discountAmount = $quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount();
+        if($cartValueIncludeDiscount){
+            $diff3 = $resp->getSession()->getCart()->getTotalValue() != intval(round($quote->getSubtotal() * 100)) ||
+                $resp->getSession()->getCart()->getTotalDiscount() != intval(round($discountAmount * 100));
+        } else {
+            $diff3 = $resp->getSession()->getCart()->getTotalValue() != intval(round($quote->getSubtotalWithDiscount() * 100)) ||
+                $resp->getSession()->getCart()->getTotalDiscount() != intval(round($discountAmount * 100));
+        }
 
         $quoteStoreCode = $quote->getStore()->getCode();
-        if ($diff || $diff2 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
+        if ($diff || $diff2 || $diff3 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
             $updateReq = new UpdateSessionRequest();
             $updateReq->setId($ingridSessionId);
             $updateReq->setCart($this->makeCart($quote));
@@ -402,12 +412,16 @@ class IngridSessionService {
         $quote->collectTotals();
         $cart = new Cart();
         $cart->setCartId($quote->getId());
-        $cart->setTotalValue(intval($quote->getBaseGrandTotal()*100));
+        $cart->setTotalValue(intval($quote->getSubtotal() * 100));
         $cart->setCurrency($currency);
         $discountAmount = $quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount();
         if ($discountAmount > 0) {
             $this->log->debug('cart discount '.$discountAmount);
-            $cart->setTotalDiscount(intval($discountAmount* 100));
+            $cart->setTotalDiscount(intval($discountAmount * 100));
+            $cartValueIncludeDiscount = $this->config->getConfig('cart_total_value_include_discount', $quote->getStore());
+            if(!$cartValueIncludeDiscount){
+                $cart->setTotalValue(intval($quote->getSubtotalWithDiscount() * 100));
+            }
         }
         $vouchers = [];
 
