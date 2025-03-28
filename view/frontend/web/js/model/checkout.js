@@ -299,7 +299,7 @@ define([
                                 for (var block in blocks) {
                                     if (blocks.hasOwnProperty(block)) {
                                         div = jQuery('#dibs-easy-checkout_' + block);
-                                        if (div.size() > 0) {
+                                        if (div.length > 0) {
                                             div.replaceWith(blocks[block]);
                                             dibsCheckout._bindEvents(block);
                                         }

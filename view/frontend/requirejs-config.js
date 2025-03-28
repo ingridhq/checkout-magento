@@ -1,4 +1,9 @@
 var config = {
+    map: {
+        '*': {
+            dibsEasyCheckout: 'Ingrid_Checkout/js/dibs-easy-checkout/checkout'
+        }
+    },
     config: {
         mixins: {
             'Magento_Checkout/js/view/shipping': {
