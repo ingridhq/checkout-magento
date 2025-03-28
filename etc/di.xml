@@ -129,4 +129,10 @@
             </argument>
         </arguments>
     </type>
+    <type name="Dibs\EasyCheckout\Helper\Data">
+        <plugin name="nwt_ingrid_dibs_easycheckout_helper_data" type="Ingrid\Checkout\Plugin\Dibs\EasyCheckout\Helper\Data"/>
+    </type>
+    <type name="Dibs\EasyCheckout\Model\System\Config\Source\CheckoutFlow">
+        <plugin name="nwt_ingrid_dibs_easycheckout_model_system_config_source_checkoutflow" type="Ingrid\Checkout\Plugin\Dibs\EasyCheckout\Model\System\Config\Source\CheckoutFlow"/>
+    </type>
 </config>
