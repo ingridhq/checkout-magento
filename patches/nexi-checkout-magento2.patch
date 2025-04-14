@@ -1,0 +1,16 @@
+diff --git a/Controller/Order/EmbeddedSaveOrder.php b/Controller/Order/EmbeddedSaveOrder.php
+index 331d278..a2aaeff 100644
+--- a/Controller/Order/EmbeddedSaveOrder.php
++++ b/Controller/Order/EmbeddedSaveOrder.php
+@@ -56,7 +56,7 @@ class EmbeddedSaveOrder extends Checkout {
+ 
+     public function execute() {
+ 
+-        if (CheckoutFlow::FLOW_VANILLA !== $this->helper->getCheckoutFlow()) {
++        if (CheckoutFlow::FLOW_EMBEDED !== $this->helper->getCheckoutFlow()) {
+             return $this->respondWithError('Invalid checkout flow');
+         }
+ 
+-- 
+2.25.1
+
