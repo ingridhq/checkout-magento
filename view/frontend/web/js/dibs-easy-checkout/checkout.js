@@ -472,7 +472,7 @@ define([
 
              window._dibsCheckout.on('pay-initialized', function (paymentId) {
                 jQuery.ajax({
-                    url: mageurl.build("easycheckout/order/SaveOrder"),
+                    url: mageurl.build("easycheckout/order/EmbeddedSaveOrder") + '?ctrlkey=' + self.options.ctrlkey,
                     type: "POST",
                     context: this,
                     data: {pid: paymentId},
