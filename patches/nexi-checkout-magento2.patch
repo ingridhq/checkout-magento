@@ -1,3 +1,39 @@
+diff --git a/Controller/Order/ConfirmOrder.php b/Controller/Order/ConfirmOrder.php
+index 0e94899..5591668 100644
+--- a/Controller/Order/ConfirmOrder.php
++++ b/Controller/Order/ConfirmOrder.php
+@@ -73,7 +73,7 @@ class ConfirmOrder extends Checkout {
+ 
+     public function execute() {
+         $this->logInfo("in confirm order");
+-        if ($this->helper->getCheckoutFlow() == "Vanilla") {
++        if ($this->helper->getCheckoutFlow() == "EmbeddedCheckout") {
+             $trustFlag = false;
+             $paymentFailed = false;
+             $this->paymentId = $this->getRequest()->getPostValue('pid', false);
+@@ -97,12 +97,7 @@ class ConfirmOrder extends Checkout {
+         }
+ 
+         $this->getDibsCheckout()->setCheckoutContext($this->dibsCheckoutContext);
+-        $this->order = $this->dibsCheckoutContext->getOrderFactory()->create();
+-        $this->dibsCheckoutContext->getOrderResourceFactory()->create()->load(
+-                $this->order,
+-                $this->paymentId,
+-                'dibs_payment_id'
+-        );
++        $this->order = $this->dibsCheckoutContext->loadOrder($this->paymentId);
+ 
+         // No order found? This should never happen, but let's log the error just in case.
+         if (!$this->order->getId()) {
+@@ -116,7 +111,7 @@ class ConfirmOrder extends Checkout {
+         }
+ 
+         $this->paymentId = $this->order->getDibsPaymentId();
+-        //$this->addSuccessCommentToOrder();
++        $this->addSuccessCommentToOrder();
+ 
+         try {
+             $this->dibsCheckoutContext->getOrderRepository()->save($this->order);
 diff --git a/Controller/Order/EmbeddedSaveOrder.php b/Controller/Order/EmbeddedSaveOrder.php
 index 331d278..a2aaeff 100644
 --- a/Controller/Order/EmbeddedSaveOrder.php
