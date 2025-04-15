@@ -449,12 +449,10 @@ define([
                     data: {pid: response.paymentId},
                     dataType: 'json',
                     beforeSend: function () {
-                        jQuery('#dibs_easy_checkoutSidebar').show();
                         self._hideDibsCheckout();
                     },
                     complete: function () {
                         self._showDibsCheckout();
-                        jQuery('#dibs_easy_checkoutSidebar').show();
                     },
                     success: function (response) {
                         if (response.messages) {
