@@ -39,7 +39,7 @@
                                     for (var block in blocks) {
                                         if (blocks.hasOwnProperty(block)) {
                                             div = jQuery('#briqpay-checkout_' + block);
-                                            if (div.size() > 0) {
+                                            if (div.lenght > 0) {
                                                 div.replaceWith(blocks[block]);
                                                 briqpayCheckout._proto._bindEvents(block);
                                             }
