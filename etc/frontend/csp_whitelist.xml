@@ -9,7 +9,6 @@
         <policy id="script-src">
             <values>
                 <value id="ingrid" type="host">*.ingrid.com</value>
-                <value id="ingrid-hash" type="hash" algorithm="sha256">j6fx1oY5PzdqxDmveaR4FnRoUF1B7JZ2hNgO9vH8/d4=</value>
             </values>
         </policy>
     </policies>

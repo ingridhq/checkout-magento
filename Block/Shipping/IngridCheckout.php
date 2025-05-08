@@ -11,6 +11,7 @@ use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Psr\Log\LoggerInterface;
 use Ingrid\Checkout\Helper\Config;
 use Ingrid\Checkout\Model\ConfigProvider;
+use Magento\Csp\Helper\CspNonceProvider;
 
 class IngridCheckout extends Template {
 
@@ -50,6 +51,11 @@ class IngridCheckout extends Template {
     private $configProvider;
 
     /**
+     * @var CspNonceProvider
+     */
+    private $cspNonceProvider;
+
+    /**
      * Ingrid Checkout block
      * @param TemplateContext $context
      * @param HttpContext $httpContext
@@ -64,6 +70,7 @@ class IngridCheckout extends Template {
         IngridSessionService $sessionService,
         Config $config,
         ConfigProvider $configProvider,
+        CspNonceProvider $cspNonceProvider,
         array $data = []
     ) {
         $this->httpContext = $httpContext;
@@ -75,11 +82,15 @@ class IngridCheckout extends Template {
         $this->sessionService = $sessionService;
         $this->config = $config;
         $this->configProvider = $configProvider;
+        $this->cspNonceProvider = $cspNonceProvider;
     }
 
     public function getCheckoutHtml() {
         $this->logger->debug('block::getCheckoutHtml');
-        return $this->sessionService->sessionHtmlForCheckout();
+        $htmlForCheckout = $this->sessionService->sessionHtmlForCheckout();
+        $nonce = $this->cspNonceProvider->generateNonce();
+        $htmlForCheckout = preg_replace('/<script(.*?)>/i', '<script$1 nonce="' . $nonce . '">', $htmlForCheckout);
+        return $htmlForCheckout;
     }
 
     /**
