@@ -58,6 +58,7 @@ class ConfigProvider implements ConfigProviderInterface {
             'ingrid' => [
                 'checkoutUrl' => $this->getUrl('ingrid/api/checkout'),
                 'isActive' => $this->isActive(),
+                'hideKlarnaIframe' => $this->hideKlarnaIframe()
             ],
         ];
     }
@@ -79,5 +80,10 @@ class ConfigProvider implements ConfigProviderInterface {
     public function isActive()
     {
         return $this->config->getConfig('active');
+    }
+
+    public function hideKlarnaIframe()
+    {
+        return $this->config->getConfig('hide_klarna_iframe');
     }
 }
