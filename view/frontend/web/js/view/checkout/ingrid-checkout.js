@@ -54,8 +54,10 @@ define([
                 var checkExist = window.setInterval(function () {
                     if (window._sw) {
                         // console.log('_sw found');
-                        $('.opc-wrapper').css("background", "#eeeeee");
-                        $('#klarna_kco').css("visibility", "hidden");
+                        if (window.checkoutConfig.ingrid.hideKlarnaIframe) {
+                            $('.opc-wrapper').css("background", "#eeeeee");
+                            $('#klarna_kco').css("visibility", "hidden");
+                        }
                         window._sw(function(api) {
                             api.on('address_changed', function(option) {
                                 $('.opc-wrapper').css("background", "#fff");
