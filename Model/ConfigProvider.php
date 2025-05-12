@@ -58,7 +58,8 @@ class ConfigProvider implements ConfigProviderInterface {
             'ingrid' => [
                 'checkoutUrl' => $this->getUrl('ingrid/api/checkout'),
                 'isActive' => $this->isActive(),
-                'hideKlarnaIframe' => $this->hideKlarnaIframe()
+                'hideKlarnaIframe' => $this->hideKlarnaIframe(),
+                'hideMagentoShippingForm' => $this->hideMagentoShippingForm(),
             ],
         ];
     }
@@ -79,11 +80,22 @@ class ConfigProvider implements ConfigProviderInterface {
      */
     public function isActive()
     {
-        return $this->config->getConfig('active');
+        return (bool)$this->config->getConfig('active');
     }
 
+    /**
+     * @return bool
+     */
     public function hideKlarnaIframe()
     {
-        return $this->config->getConfig('hide_klarna_iframe');
+        return (bool)$this->config->getConfig('hide_klarna_iframe');
+    }
+
+    /**
+     * @return bool
+     */
+    public function hideMagentoShippingForm()
+    {
+        return (bool) $this->config->getConfig('hide_magento_shipping_form');
     }
 }
