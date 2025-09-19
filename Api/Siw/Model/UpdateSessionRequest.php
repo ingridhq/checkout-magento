@@ -60,6 +60,7 @@ class UpdateSessionRequest implements ModelInterface, ArrayAccess {
         'cart' => '\Ingrid\Checkout\Api\Siw\Model\Cart',
         'customer' => '\Ingrid\Checkout\Api\Siw\Model\CustomerInfo',
         'search_address' => '\Ingrid\Checkout\Api\Siw\Model\Address',
+        'prefill_delivery_address' => '\Ingrid\Checkout\Api\Siw\Model\Address',
         'external_id' => 'string',
         'purchase_country' => 'string',
         'purchase_currency' => 'string',
@@ -76,6 +77,7 @@ class UpdateSessionRequest implements ModelInterface, ArrayAccess {
         'cart' => null,
         'customer' => null,
         'search_address' => null,
+        'prefill_delivery_address' => null,
         'external_id' => null,
         'purchase_country' => null,
         'purchase_currency' => null,
@@ -111,6 +113,7 @@ class UpdateSessionRequest implements ModelInterface, ArrayAccess {
         'cart' => 'cart',
         'customer' => 'customer',
         'search_address' => 'search_address',
+        'prefill_delivery_address' => 'prefill_delivery_address',
         'external_id' => 'external_id',
         'purchase_country' => 'purchase_country',
         'purchase_currency' => 'purchase_currency',
@@ -127,6 +130,7 @@ class UpdateSessionRequest implements ModelInterface, ArrayAccess {
         'cart' => 'setCart',
         'customer' => 'setCustomer',
         'search_address' => 'setSearchAddress',
+        'prefill_delivery_address' => 'setPrefillDeliveryAddress',
         'external_id' => 'setExternalId',
         'purchase_country' => 'setPurchaseCountry',
         'purchase_currency' => 'setPurchaseCurrency',
@@ -143,6 +147,7 @@ class UpdateSessionRequest implements ModelInterface, ArrayAccess {
         'cart' => 'getCart',
         'customer' => 'getCustomer',
         'search_address' => 'getSearchAddress',
+        'prefill_delivery_address' => 'getPrefillDeliveryAddress',
         'external_id' => 'getExternalId',
         'purchase_country' => 'getPurchaseCountry',
         'purchase_currency' => 'getPurchaseCurrency',
@@ -204,6 +209,7 @@ class UpdateSessionRequest implements ModelInterface, ArrayAccess {
         $this->container['cart'] = isset($data['cart']) ? $data['cart'] : null;
         $this->container['customer'] = isset($data['customer']) ? $data['customer'] : null;
         $this->container['search_address'] = isset($data['search_address']) ? $data['search_address'] : null;
+        $this->container['prefill_delivery_address'] = isset($data['prefill_delivery_address']) ? $data['prefill_delivery_address'] : null;
         $this->container['external_id'] = isset($data['external_id']) ? $data['external_id'] : null;
         $this->container['purchase_country'] = isset($data['purchase_country']) ? $data['purchase_country'] : null;
         $this->container['purchase_currency'] = isset($data['purchase_currency']) ? $data['purchase_currency'] : null;
@@ -338,6 +344,27 @@ class UpdateSessionRequest implements ModelInterface, ArrayAccess {
     public function setSearchAddress($search_address) {
         $this->container['search_address'] = $search_address;
 
+        return $this;
+    }
+
+    /**
+     * Gets prefill_delivery_address
+     *
+     * @return \Ingrid\Checkout\Api\Siw\Model\Address
+     */
+    public function getPrefillDeliveryAddress() {
+        return $this->container['prefill_delivery_address'];
+    }
+
+    /**
+     * Sets prefill_delivery_address
+     *
+     * @param \Ingrid\Checkout\Api\Siw\Model\Address $prefill_delivery_address prefill_delivery_address
+     *
+     * @return $this
+     */
+    public function setPrefillDeliveryAddress($prefill_delivery_address) {
+        $this->container['prefill_delivery_address'] = $prefill_delivery_address;
         return $this;
     }
 
