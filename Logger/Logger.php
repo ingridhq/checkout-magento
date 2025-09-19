@@ -6,7 +6,8 @@ namespace Ingrid\Checkout\Logger;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Monolog\DateTimeImmutable;
+use Monolog\Level;
+use Monolog\JsonSerializableDateTimeImmutable;
 
 class Logger extends \Monolog\Logger {
     /**
@@ -46,12 +47,12 @@ class Logger extends \Monolog\Logger {
      * @param  int               $level    The logging level (a Monolog or RFC 5424 level)
      * @param  string            $message  The log message
      * @param  mixed[]           $context  The log context
-     * @param  DateTimeImmutable $datetime Optional log date to log into the past or future
+     * @param  JsonSerializableDateTimeImmutable|null $datetime Optional log date to log into the past or future
      * @return bool              Whether the record has been processed
      *
      * @phpstan-param Level $level
      */
-    public function addRecord(int $level, string $message, array $context = [], DateTimeImmutable $datetime = null): bool
+    public function addRecord(int|Level $level, string $message, array $context = [], JsonSerializableDateTimeImmutable|null $datetime = null): bool
     {
         return parent::addRecord($level, $message, $context, $datetime);
     }
