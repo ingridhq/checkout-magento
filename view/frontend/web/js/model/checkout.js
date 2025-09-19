@@ -162,7 +162,7 @@ define([
                         quote.shippingAddress(ingridAddress);
                         //stanard magento checkout
                         if($('#shipping-new-address-form').length > 0) {
-                            if(quote.guestEmail == null) {
+                            if(quote.guestEmail == null && typeof summary !== "undefined" && summary.delivery_address) {
                                 quote.guestEmail = summary.delivery_address.email;
                                 registry.set('index = customer-email',summary.delivery_address.email);
                             }
