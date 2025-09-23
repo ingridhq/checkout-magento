@@ -35,6 +35,16 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Select 'Yes' to include discounts in Ingrid cart total value.</comment>
                 </field>
+                <field id="hide_klarna_iframe" translate="label" type="select" sortOrder="36" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Hide Klarna Iframe</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Select 'Yes' to hide Klarna iframe in checkout until ingrid delivery method is set.</comment>
+                </field>
+                <field id="hide_magento_shipping_form" translate="label" type="select" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Hide Magento Shipping Form</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Select 'Yes' to hide the Magento shipping form when the Ingrid address form is active.</comment>
+                </field>
                 <field id="product_widget_active" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Product widget enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

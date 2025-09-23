@@ -452,7 +452,7 @@ class DefaultApi {
                 $body->getCart()->getVouchers() ? $arrayBody["cart"]["vouchers"] = $body->getCart()->getVouchers():'';
 
                 if ($body->getSearchAddress()) {
-                    $arrayBody['search_sddress'] = $this->mapAddress($body->getSearchAddress());
+                    $arrayBody['search_address'] = $this->mapAddress($body->getSearchAddress());
                 }
                 if ($body->getPrefillDeliveryAddress()) {
                     $arrayBody['prefill_delivery_address'] = $this->mapAddress($body->getPrefillDeliveryAddress());
@@ -1229,10 +1229,11 @@ class DefaultApi {
                 $body->getExternalId() ? $arrayBody['external_id'] = $body->getExternalId():'';
                 if ($body->getSearchAddress()) {
                     if ($body->getSearchAddress()->getPostalCode()) {
-                        $arrayBody['search_sddress'] = [
-                            $this->mapAddress($body->getSearchAddress())
-                        ];
+                        $arrayBody['search_address'] = $this->mapAddress($body->getSearchAddress());
                     }
+                }
+                if ($body->getPrefillDeliveryAddress()) {
+                    $arrayBody['prefill_delivery_address'] = $this->mapAddress($body->getPrefillDeliveryAddress());
                 }
                 $body->getPurchaseCountry() ? $arrayBody['purchase_country'] = $body->getPurchaseCountry():'';
                 $body->getPurchaseCurrency() ? $arrayBody["purchase_currency"] = $body->getPurchaseCurrency():'';
