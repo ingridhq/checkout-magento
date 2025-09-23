@@ -20,7 +20,8 @@
         <arguments>
             <argument name="name" xsi:type="string">ingrid</argument>
             <argument name="handlers"  xsi:type="array">
-                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\Debug</item>
+                <item name="system" xsi:type="object">Ingrid\Checkout\Logger\Handler</item>
+                <item name="error" xsi:type="object">Ingrid\Checkout\Logger\Handler\Error</item>
             </argument>
         </arguments>
     </virtualType>
@@ -29,7 +30,8 @@
         <arguments>
             <argument name="name" xsi:type="string">ingrid_api</argument>
             <argument name="handlers"  xsi:type="array">
-                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\Debug</item>
+                <item name="system" xsi:type="object">Ingrid\Checkout\Logger\Handler</item>
+                <item name="error" xsi:type="object">Ingrid\Checkout\Logger\Handler\Error</item>
             </argument>
         </arguments>
     </virtualType>
@@ -38,7 +40,8 @@
         <arguments>
             <argument name="name" xsi:type="string">ingrid_mock_api</argument>
             <argument name="handlers"  xsi:type="array">
-                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\Debug</item>
+                <item name="system" xsi:type="object">Ingrid\Checkout\Logger\Handler</item>
+                <item name="error" xsi:type="object">Ingrid\Checkout\Logger\Handler\Error</item>
             </argument>
         </arguments>
     </virtualType>
