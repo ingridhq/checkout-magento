@@ -70,7 +70,7 @@ define([
                             });
                         });
 
-                        if (window.checkoutConfig.saveShippingMethodUrl === undefined) {
+                        if (window.checkoutConfig.saveShippingMethodUrl === undefined || window._dibsCheckout === undefined) {
                             checkout.attachEvents();
                         } else {
                               checkout.attachDibsEvents();
