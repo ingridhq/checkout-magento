@@ -440,8 +440,12 @@ class IngridSessionService {
         $label = $this->slugify->slugify('store');
         $value = $this->slugify->slugify($storeCode);
         $keyset = $label.':'.$value;
-        $attrs[] = $keyset;
         $attributes = [];
+        $attributes[] = $keyset;
+        $customerGroupId = $quote->getCustomerGroupId();
+        $label = $this->slugify->slugify('customer_group_id');
+        $value = $this->slugify->slugify(''.$customerGroupId);
+        $keyset = $label.':'.$value;
         $attributes[] = $keyset;
         $cart->setAttributes($attributes);
 
