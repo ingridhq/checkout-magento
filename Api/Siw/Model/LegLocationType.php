@@ -41,10 +41,11 @@ class LegLocationType {
     /**
      * Possible values of this enum
      */
-    const UNKNOWN = 'UNKNOWN';
-    const WAREHOUSE = 'WAREHOUSE';
-    const STORE = 'STORE';
-    const HOME = 'HOME';
+    const UNKNOWN = 'LOCATION_TYPE_UNKNOWN';
+    const WAREHOUSE = 'LOCATION_TYPE_WAREHOUSE';
+    const STORE = 'LOCATION_TYPE_STORE';
+    const HOME = 'LOCATION_TYPE_HOME';
+    const PICKUP = 'LOCATION_TYPE_PICKUP';
     /**
      * Gets allowable values of the enum
      * @return string[]
@@ -54,6 +55,8 @@ class LegLocationType {
             self::UNKNOWN,
             self::WAREHOUSE,
             self::STORE,
-            self::HOME,        ];
+            self::HOME,
+            self::PICKUP,
+        ];
     }
 }
