@@ -15,6 +15,7 @@ define([
     'Magento_Checkout/js/action/set-shipping-information',
     'Magento_Checkout/js/checkout-data',
     'Magento_Customer/js/customer-data',
+    'Magento_Checkout/js/model/shipping-rate-registry',
 ], function (
     $,
     registry,
@@ -30,7 +31,8 @@ define([
     getTotals,
     setShippingInformationAction,
     checkoutData,
-    customerData
+    customerData,
+    rateRegistry,
 ) {
     'use strict';
     var refreshInProcess = false;
@@ -197,6 +199,12 @@ define([
                             setShippingInformationAction().done(
                                 function () {
                                     getTotals([]);
+                                    var address = quote.shippingAddress();
+                                    if (address) {
+                                        rateRegistry.set(address.getKey(), null);
+                                        rateRegistry.set(address.getCacheKey(), null);
+                                        quote.shippingAddress.valueHasMutated();
+                                    }
                                 }
                             );
                         }
