@@ -258,8 +258,20 @@ class IngridSessionService {
                 $resp->getSession()->getCart()->getTotalDiscount() != intval(round($discountAmount * 100));
         }
 
+        $couponCode = mb_strtolower($quote->getCouponCode()??"");
+        $vouchers = $resp->getSession()->getCart()->getVouchers();
+        if ($couponCode === '' && !empty($vouchers)) {
+            $dif4 = true;
+        } elseif ($couponCode !== '' && empty($vouchers)) {
+            $dif4 = true;
+        } elseif ($couponCode !== '' && !in_array($couponCode, $vouchers)) {
+            $dif4 = true;
+        } else {
+            $dif4 = false;
+        }
+
         $quoteStoreCode = $quote->getStore()->getCode();
-        if ($diff || $diff2 || $diff3 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
+        if ($diff || $diff2 || $diff3 || $dif4 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
             $updateReq = new UpdateSessionRequest();
             $updateReq->setId($ingridSessionId);
             $updateReq->setCart($this->makeCart($quote));
