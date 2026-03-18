@@ -283,7 +283,9 @@ class IngridSessionService {
         if($searchAddress != null){
             if($searchAddress->getPostalCode() != null){
                 $this->mapAddress($quote, $searchAddress, 'shipping', true);
-                $this->mapAddress($quote, $searchAddress, 'billing', true);
+                if ($quote->getShippingAddress()->getSameAsBilling()) {
+                    $this->mapAddress($quote, $searchAddress, 'billing', true);
+                }
                 $quote->save();
             }
         }
