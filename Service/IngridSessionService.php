@@ -702,13 +702,16 @@ class IngridSessionService {
      */
     private function completeSession(string $sessionId, Order $order): CompleteSessionResponse {
         $bill = $order->getBillingAddress();
+        $ship = $order->getShippingAddress();
         $orderId = self::mageOrderId($order);
         $req = new CompleteSessionRequest();
         $req->setId($sessionId);
         $req->setExternalId($orderId);
 
-        $addr = self::mkAddress($bill, $order->getCustomerFirstname(), $order->getCustomerLastname());
-        $customer = self::mkCustomer($addr, $bill);
+        // Use shipping address if available, otherwise fallback to billing
+        $addressForCustomer = $ship ?: $bill;
+        $addr = self::mkAddress($addressForCustomer, $order->getCustomerFirstname(), $order->getCustomerLastname());
+        $customer = self::mkCustomer($addr, $addressForCustomer);
 
         $req->setCustomer($customer);
 
