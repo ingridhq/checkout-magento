@@ -710,7 +710,11 @@ class IngridSessionService {
 
         // Use shipping address if available, otherwise fallback to billing
         $addressForCustomer = $ship ?: $bill;
-        $addr = self::mkAddress($addressForCustomer, $order->getCustomerFirstname(), $order->getCustomerLastname());
+        $addr = $this->mkAddress(
+            $addressForCustomer,
+            $addressForCustomer->getFirstname(),
+            $addressForCustomer->getLastname()
+        );
         $customer = self::mkCustomer($addr, $addressForCustomer);
 
         $req->setCustomer($customer);
