@@ -13,8 +13,6 @@ class SerializerFactory {
      * @return Serializer
      */
     public static function create() {
-        /** @noinspection PhpDeprecationInspection */
-        AnnotationRegistry::registerLoader('class_exists');
         return SerializerBuilder::create()->build();
     }
 }

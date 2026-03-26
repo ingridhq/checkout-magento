@@ -258,8 +258,20 @@ class IngridSessionService {
                 $resp->getSession()->getCart()->getTotalDiscount() != intval(round($discountAmount * 100));
         }
 
+        $couponCode = mb_strtolower($quote->getCouponCode()??"");
+        $vouchers = $resp->getSession()->getCart()->getVouchers();
+        if ($couponCode === '' && !empty($vouchers)) {
+            $dif4 = true;
+        } elseif ($couponCode !== '' && empty($vouchers)) {
+            $dif4 = true;
+        } elseif ($couponCode !== '' && !in_array($couponCode, $vouchers)) {
+            $dif4 = true;
+        } else {
+            $dif4 = false;
+        }
+
         $quoteStoreCode = $quote->getStore()->getCode();
-        if ($diff || $diff2 || $diff3 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
+        if ($diff || $diff2 || $diff3 || $dif4 || !in_array('store:'.$quoteStoreCode ,$resp->getSession()->getCart()->getAttributes())) {
             $updateReq = new UpdateSessionRequest();
             $updateReq->setId($ingridSessionId);
             $updateReq->setCart($this->makeCart($quote));
@@ -271,7 +283,9 @@ class IngridSessionService {
         if($searchAddress != null){
             if($searchAddress->getPostalCode() != null){
                 $this->mapAddress($quote, $searchAddress, 'shipping', true);
-                $this->mapAddress($quote, $searchAddress, 'billing', true);
+                if ($quote->getShippingAddress()->getSameAsBilling()) {
+                    $this->mapAddress($quote, $searchAddress, 'billing', true);
+                }
                 $quote->save();
             }
         }
@@ -688,13 +702,20 @@ class IngridSessionService {
      */
     private function completeSession(string $sessionId, Order $order): CompleteSessionResponse {
         $bill = $order->getBillingAddress();
+        $ship = $order->getShippingAddress();
         $orderId = self::mageOrderId($order);
         $req = new CompleteSessionRequest();
         $req->setId($sessionId);
         $req->setExternalId($orderId);
 
-        $addr = self::mkAddress($bill, $order->getCustomerFirstname(), $order->getCustomerLastname());
-        $customer = self::mkCustomer($addr, $bill);
+        // Use shipping address if available, otherwise fallback to billing
+        $addressForCustomer = $ship ?: $bill;
+        $addr = $this->mkAddress(
+            $addressForCustomer,
+            $addressForCustomer->getFirstname(),
+            $addressForCustomer->getLastname()
+        );
+        $customer = self::mkCustomer($addr, $addressForCustomer);
 
         $req->setCustomer($customer);
 

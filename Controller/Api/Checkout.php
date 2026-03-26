@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Ingrid\Checkout\Controller\Api;
 
-use Ingrid\Checkout\Helper\SerializerFactory;
-use Ingrid\Checkout\Model\CheckoutUpdateRequest;
-use Ingrid\Checkout\Service\IngridSessionService;
+use Ingrid\Checkout\Api\SiwClientInterface;
+use Ingrid\Checkout\Api\Siw\Model\UpdateSessionRequest;
+use Ingrid\Checkout\Api\Siw\Model\Address;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Request\Http as HttpRequest;
@@ -31,10 +31,6 @@ class Checkout extends BaseAction {
      */
     private $log;
     /**
-     * @var \JMS\Serializer\Serializer
-     */
-    private $serializer;
-    /**
      * @var JsonFactory
      */
     private $resultJsonFactory;
@@ -42,34 +38,32 @@ class Checkout extends BaseAction {
      * @var CheckoutSession
      */
     private $checkoutSession;
+
     /**
-     * @var IngridSessionService
+     * @var SiwClientInterface
      */
-    private $sessionService;
+    private $siwClient;
 
     /**
      * @param Context $context
      * @param CheckoutSession $checkoutSession
      * @param LoggerInterface $logger
      * @param JsonFactory $resultJsonFactory
-     * @param IngridSessionService $sessionService
-     * @param SerializerFactory $serializerFactory
+     * @param SiwClientInterface $siwClient
      */
     public function __construct(
         Context $context,
         CheckoutSession $checkoutSession,
         LoggerInterface $logger,
         JsonFactory $resultJsonFactory,
-        IngridSessionService $sessionService,
-        SerializerFactory $serializerFactory
+        SiwClientInterface $siwClient
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
         $this->log = $logger;
         $this->context = $context;
         $this->checkoutSession = $checkoutSession;
-        $this->sessionService = $sessionService;
-        $this->serializer = $serializerFactory->create();
+        $this->siwClient = $siwClient;
     }
 
     /**
@@ -99,22 +93,52 @@ class Checkout extends BaseAction {
         }
         $this->log->debug('checkout session id='.$ingridSessionId, $logCtx);
 
-        $body = $request->getContent();
-        $this->log->debug('body='.$body, $logCtx);
+        // Build UpdateSessionRequest as in the other controller
+        $updateReq = new UpdateSessionRequest();
+        $updateReq->setId($ingridSessionId);
 
-        /** @var CheckoutUpdateRequest $req */
-        $req = $this->serializer->deserialize($body, CheckoutUpdateRequest::class, 'json');
+        $quote = $this->checkoutSession->getQuote();
+        $shippingAddr = $quote->getShippingAddress();
+
+        $addr = new Address();
+        $addr->setCity($shippingAddr->getCity());
+        $addr->setCountry($shippingAddr->getCountryId());
+        $addr->setPostalCode($shippingAddr->getPostcode());
+
+        if ($quote->getCustomerIsGuest()) {
+            $addr->setRegion($shippingAddr->getRegionCode());
+        } else {
+            if ($shippingAddr->getRegion() != null) {
+                $region = $shippingAddr->getRegion();
+                if (is_object($region) && method_exists($region, 'getRegionCode')) {
+                    $addr->setRegion($region->getRegionCode());
+                } else {
+                    $addr->setRegion(is_string($region) ? $region : '');
+                }
+            }
+        }
+
+        $addrLines = self::cleanStreet($shippingAddr->getStreet());
+        if ($addrLines) {
+            $addr->setAddressLines($addrLines);
+        }
+
+        if ($addr->getCountry() != '') {
+            $updateReq->setSearchAddress($addr);
+        }
 
         try {
-            $this->sessionService->update($ingridSessionId, $req);
+            $this->siwClient->updateSession($updateReq);
         } catch (\Exception $e) {
             $this->log->error('failed to update session: '.$e->getMessage(), $logCtx);
         }
 
         $this->log->debug('checkout data callback: success', $logCtx);
-        return $this->resultFactory->create(ResultFactory::TYPE_RAW)
-            ->setContents("")
-            ->setHttpResponseCode(200);
+        /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
+        $resultRaw = $this->resultFactory->create(ResultFactory::TYPE_RAW);
+        $resultRaw->setContents("");
+        $resultRaw->setHttpResponseCode(200);
+        return $resultRaw;
     }
 
     /**
@@ -136,5 +160,29 @@ class Checkout extends BaseAction {
             $context['ingrid_session_id'] = $this->checkoutSession->getQuote()->getIngridSessionId();
         }
         return $context;
+    }
+
+    /**
+     * @param string|array $street
+     * @return array|null
+     */
+    public static function cleanStreet($street): ?array {
+        if (!is_array($street)) {
+            $street = [$street];
+        }
+
+        $street = array_map(function ($line) {
+            if ($line !== null) {
+                return trim($line);
+            }
+            return null;
+        }, $street);
+        $street = array_filter($street);
+
+        if (count($street) > 0) {
+            return $street;
+        }
+
+        return null;
     }
 }

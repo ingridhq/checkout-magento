@@ -11,6 +11,9 @@ var config = {
             },
             'Klarna_Kco/js/view/shipping-method': {
                 'Ingrid_Checkout/js/view/kco-shipping-mixin': true
+            },
+            'Magento_Checkout/js/action/set-shipping-information': {
+                'Ingrid_Checkout/js/action/set-shipping-information-mixin': true
             }
         }
     }
